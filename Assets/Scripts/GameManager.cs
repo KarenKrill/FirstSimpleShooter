@@ -53,8 +53,8 @@ public class GameManager : MonoBehaviour
     public void StartNewGame()
     {
         _roundCount = 0;
-        //Player.Health = Player.MaxHealth;
-        //Enemy.Health = Enemy.MaxHealth;
+        Player.Health = Player.MaxHealth;
+        Enemy.Health = Enemy.MaxHealth;
         UpdateHealSlider(Player, PlayerLifeSliderParent);
         UpdateHealSlider(Enemy, EnemyLifeSliderParent);
         State = GameState.PlayerTurn;
@@ -106,7 +106,7 @@ public class GameManager : MonoBehaviour
     public ArmorType _playerLastAim, _enemyLastAim;
     public void Attack()
     {
-        if (InventoryManager.Instance.EquippedWeapon != null)
+        if (InventoryManager.Instance?.EquippedWeapon != null)
         {
             var weapon = InventoryManager.Instance.EquippedWeapon;
             if (_state == GameState.PlayerTurn)
@@ -124,17 +124,21 @@ public class GameManager : MonoBehaviour
                     State = GameState.EnemyTurn;
                     EnemyAttack();
                 }
-                else if(RewardItems != null && RewardItems.Count > 0)
+                else
                 {
-                    System.Random random = new();
-                    int rewardItemIndex = RewardItems.Count == 1 ? 0 : random.Next(0, RewardItems.Count - 1);
-                    var rewardItem = Instantiate(RewardItems[rewardItemIndex]);
-                    InventoryManager.Instance.AddItem(rewardItem);
+                    if (RewardItems != null && RewardItems.Count > 0)
+                    {
+                        System.Random random = new();
+                        int rewardItemIndex = RewardItems.Count == 1 ? 0 : random.Next(0, RewardItems.Count - 1);
+                        var rewardItem = Instantiate(RewardItems[rewardItemIndex]);
+                        InventoryManager.Instance.AddItem(rewardItem);
+                    }
                     if (_roundCount++ >= RoundsCount)
                     {
                         State = GameState.Win;
                     }
                     else Enemy.Health = Enemy.MaxHealth;
+                    UpdateHealSlider(Enemy, EnemyLifeSliderParent);
                 }
             }
         }
@@ -153,6 +157,7 @@ public class GameManager : MonoBehaviour
         {
             State = GameState.Defeat;
         }
+        else State = GameState.PlayerTurn;
     }
     public void Heal(float hp)
     {

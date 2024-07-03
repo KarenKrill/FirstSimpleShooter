@@ -18,7 +18,10 @@ public class MenuManager : MonoBehaviour
     }
     private void OnDestroy()
     {
-        GameManager.Instance.GameStateChanged -= OnGameStateChanged;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.GameStateChanged -= OnGameStateChanged;
+        }
     }
     private void OnGameStateChanged(GameState state)
     {
