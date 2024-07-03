@@ -22,5 +22,5 @@ MonoBehaviour:
   Damage: 5
   IsReloadable: 1
   AmmoCountPerShoot: 1
-  AmmoCount: 0
+  AmmoCount: 10
   MaxAmmoCount: 10
