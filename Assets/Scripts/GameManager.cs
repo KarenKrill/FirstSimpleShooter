@@ -58,12 +58,13 @@ public class GameManager : MonoBehaviour
         UpdateHealSlider(Player, PlayerLifeSliderParent);
         UpdateHealSlider(Enemy, EnemyLifeSliderParent);
         State = GameState.PlayerTurn;
+        InventoryManager.Instance?.ClearItems();
         foreach (var item in Player.Inventory.Items)
         {
             if (item != null)
             {
                 var cloneItem = Instantiate(item);
-                InventoryManager.Instance.AddItem(cloneItem);
+                InventoryManager.Instance?.AddItem(cloneItem);
             }
         }
     }

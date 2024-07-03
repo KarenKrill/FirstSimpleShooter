@@ -168,6 +168,25 @@ public class InventoryManager : MonoBehaviour, IPointerDownHandler, IPointerUpHa
             }
         }
     }
+    public void ClearItems()
+    {
+        foreach (Transform itemTransform in ItemsParent.transform)
+        {
+            var item = itemTransform?.gameObject?.GetComponent<InventoryItem>();
+            if (item != null)
+            {
+                Destroy(itemTransform.gameObject);
+            }
+        }
+        foreach (Transform childTransform in SlotsParent.transform)
+        {
+            var slot = childTransform?.gameObject?.GetComponent<InventorySlot>();
+            if (slot != null)
+            {
+                slot.Item = null;
+            }
+        }
+    }
     public void EquipWeapon(Weapon weapon)
     {
         EquippedWeapon = weapon;
