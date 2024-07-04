@@ -149,7 +149,7 @@ public class InventoryManager : MonoBehaviour, IPointerDownHandler, IPointerUpHa
                 if (ii != null)
                 {
                     ii.GameItem = gameItem;
-                    ii.TextColor = Color.red;
+                    ii.TextColor = Color.black;
                     slot.PutItem(inventoryItem);
                     //_items.Add((gameItem.Name, gameItem));
                 } // else exception

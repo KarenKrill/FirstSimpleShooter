@@ -104,6 +104,7 @@ public class GameManager : MonoBehaviour
         }
     }
     public ArmorType _playerLastAim, _enemyLastAim;
+    private System.Random _random = new();
     public void Attack()
     {
         if (InventoryManager.Instance?.EquippedWeapon != null)
@@ -114,6 +115,7 @@ public class GameManager : MonoBehaviour
                 var ammoCountPerShoot = weapon.AmmoCountPerShoot < weapon.AmmoCount ? weapon.AmmoCountPerShoot : weapon.AmmoCount;
                 float damage = weapon.Damage * ammoCountPerShoot;// calc damage
                 _playerLastAim = _playerLastAim == ArmorType.Headgear ? ArmorType.Cuirass : ArmorType.Headgear;
+                //_playerLastAim = _random.Next(0, 4) == 0 ? ArmorType.Headgear : ArmorType.Cuirass;
                 damage *= _playerLastAim == ArmorType.Headgear ? Player.HeadDamageMultiplier : Player.BodyDamageMultiplier;
                 damage *= ((100f - 5 * (_playerLastAim == ArmorType.Headgear ? Player.HeadDefence : Player.BodyDefence)) / 100f); // armor attack reduction
                 weapon.AmmoCount -= ammoCountPerShoot;
@@ -133,7 +135,7 @@ public class GameManager : MonoBehaviour
                         var rewardItem = Instantiate(RewardItems[rewardItemIndex]);
                         InventoryManager.Instance.AddItem(rewardItem);
                     }
-                    if (_roundCount++ >= RoundsCount)
+                    if (++_roundCount >= RoundsCount)
                     {
                         State = GameState.Win;
                     }
@@ -148,7 +150,8 @@ public class GameManager : MonoBehaviour
     {
         var weapon = (Weapon)EnemyWeapon;
         float damage = weapon.Damage;
-        _enemyLastAim = _enemyLastAim == ArmorType.Headgear ? ArmorType.Cuirass : ArmorType.Headgear;
+        //_enemyLastAim = _enemyLastAim == ArmorType.Headgear ? ArmorType.Cuirass : ArmorType.Headgear;
+        _enemyLastAim = _random.Next(0, 9) == 0 ? ArmorType.Headgear : ArmorType.Cuirass;
         damage *= _enemyLastAim == ArmorType.Headgear ? Enemy.HeadDamageMultiplier : Enemy.BodyDamageMultiplier;
         damage *= ((100f - 5 * (_enemyLastAim == ArmorType.Headgear ? Enemy.HeadDefence : Enemy.BodyDefence)) / 100f); // armor attack reduction
         Player.Damage(damage);

@@ -204,7 +204,7 @@ MonoBehaviour:
   GameItem: {fileID: 0}
   _icon: {fileID: 48004113075450026}
   _countTextObject: {fileID: 7550594378023200255}
-  TextColor: {r: 1, g: 0, b: 0, a: 1}
+  TextColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &7550594378023200255
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,10 +237,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3911066981846691518}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 15, y: 15}
+  m_AnchoredPosition: {x: -4, y: 0}
+  m_SizeDelta: {x: -4, y: 15}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &7515737492781452806
 CanvasRenderer:
@@ -304,7 +304,7 @@ MonoBehaviour:
   m_fontSizeMin: 3
   m_fontSizeMax: 10
   m_fontStyle: 1
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 4
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
