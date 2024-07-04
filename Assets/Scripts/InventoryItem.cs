@@ -30,13 +30,13 @@ public class InventoryItem : MonoBehaviour
         {
             if (GameItem != null)
             {
-                if (GameItem.StackCount != _lastStackCount)
+                if (GameItem.Stats.StackCount != _lastStackCount)
                 {
                     if (_lastStackCount <= 1)
                     {
                         _countText.enabled = true;
                     }
-                    _lastStackCount = GameItem.StackCount;
+                    _lastStackCount = GameItem.Stats.StackCount;
                     if (_lastStackCount <= 1)
                     {
                         _countText.enabled = false;
@@ -47,7 +47,7 @@ public class InventoryItem : MonoBehaviour
                 {
                     _countText.enabled = true;
                     _isEmptyWeaponColor = true;
-                    if (weapon.AmmoCount == 0)
+                    if (weapon.WeaponStats.AmmoCount == 0)
                     {
                         _countText.color = Color.red;
                         _isEmptyWeaponColor = true;
@@ -57,7 +57,7 @@ public class InventoryItem : MonoBehaviour
                         _countText.color = TextColor;
                         _isEmptyWeaponColor = false;
                     }
-                    _countText.text = $"{weapon.AmmoCount}/{weapon.MaxAmmoCount}";
+                    _countText.text = $"{weapon.WeaponStats.AmmoCount}/{weapon.WeaponStats.MaxAmmoCount}";
                 }
             }
             if (_countText.enabled && _lastTextColor != TextColor && !_isEmptyWeaponColor)

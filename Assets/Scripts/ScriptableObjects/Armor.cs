@@ -10,9 +10,14 @@ public enum ArmorType
     Cuirass
 }
 [Serializable]
-[CreateAssetMenu(fileName = nameof(Armor), menuName = "Scriptable Objects/" + nameof(Armor))]
-public class Armor : GameItem
+public class ArmorStats
 {
     public ArmorType Type;
     public float Defence;
+}
+[Serializable]
+[CreateAssetMenu(fileName = nameof(Armor), menuName = "Scriptable Objects/" + nameof(Armor))]
+public class Armor : GameItem
+{
+    public ArmorStats ArmorStats;
 }

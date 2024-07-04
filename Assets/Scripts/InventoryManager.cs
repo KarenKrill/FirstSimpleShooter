@@ -58,13 +58,13 @@ public class InventoryManager : MonoBehaviour, IPointerDownHandler, IPointerUpHa
                         var destInventoryItemParent = destInventorySlot.Item;
                         var destGameItem = destInventoryItemParent.GetComponent<InventoryItem>()?.GameItem;
                         var sourceGameItem = _dragItemSlot.Item.GetComponent<InventoryItem>()?.GameItem;
-                        if (destGameItem.Name == sourceGameItem.Name && destGameItem.StackCount < destGameItem.MaxStackCount)
+                        if (destGameItem.Stats.Name == sourceGameItem.Stats.Name && destGameItem.Stats.StackCount < destGameItem.Stats.MaxStackCount)
                         {
-                            uint availableDestItemsCount = destGameItem.MaxStackCount - destGameItem.StackCount;
-                            uint moveItemsCount = sourceGameItem.StackCount < availableDestItemsCount ? sourceGameItem.StackCount : availableDestItemsCount;
-                            destGameItem.StackCount += moveItemsCount;
-                            sourceGameItem.StackCount -= moveItemsCount;
-                            if (sourceGameItem.StackCount == 0)
+                            uint availableDestItemsCount = destGameItem.Stats.MaxStackCount - destGameItem.Stats.StackCount;
+                            uint moveItemsCount = sourceGameItem.Stats.StackCount < availableDestItemsCount ? sourceGameItem.Stats.StackCount : availableDestItemsCount;
+                            destGameItem.Stats.StackCount += moveItemsCount;
+                            sourceGameItem.Stats.StackCount -= moveItemsCount;
+                            if (sourceGameItem.Stats.StackCount == 0)
                             {
                                 Destroy(_dragItemSlot.Item);
                             }
@@ -75,14 +75,14 @@ public class InventoryManager : MonoBehaviour, IPointerDownHandler, IPointerUpHa
                         }
                         else
                         {
-                            if (destGameItem is Weapon weapon && sourceGameItem is Ammo ammo && ammo.WeaponName == weapon.Name && weapon.AmmoCount < weapon.MaxAmmoCount)
+                            if (destGameItem is Weapon weapon && sourceGameItem is Ammo ammo && ammo.AmmoStats.WeaponName == weapon.Stats.Name && weapon.WeaponStats.AmmoCount < weapon.WeaponStats.MaxAmmoCount)
                             {
-                                var missingAmmoCount = weapon.MaxAmmoCount - weapon.AmmoCount;
-                                uint ammoCount = ammo.StackCount > missingAmmoCount ? missingAmmoCount : ammo.StackCount;
-                                weapon.AmmoCount += ammoCount;
-                                if (ammoCount < ammo.StackCount)
+                                var missingAmmoCount = weapon.WeaponStats.MaxAmmoCount - weapon.WeaponStats.AmmoCount;
+                                uint ammoCount = ammo.Stats.StackCount > missingAmmoCount ? missingAmmoCount : ammo.Stats.StackCount;
+                                weapon.WeaponStats.AmmoCount += ammoCount;
+                                if (ammoCount < ammo.Stats.StackCount)
                                 {
-                                    ammo.StackCount -= ammoCount;
+                                    ammo.Stats.StackCount -= ammoCount;
                                     _dragItemSlot.PutItem(_dragItemSlot.Item);
                                 }
                                 else
@@ -177,6 +177,14 @@ public class InventoryManager : MonoBehaviour, IPointerDownHandler, IPointerUpHa
     }
     public void RemItem(GameItem gameItem)
     {
+        if (gameItem is Weapon weapon && EquippedWeapon == weapon)
+        {
+            EquippedWeapon = null;
+        }
+        else if (gameItem is Armor armor && EquippedArmor.TryGetValue(armor.ArmorStats.Type, out var equippedArmor) && equippedArmor == armor)
+        {
+            EquippedArmor.Remove(armor.ArmorStats.Type);
+        }
         foreach (Transform itemTransform in ItemsParent.transform)
         {
             var item = itemTransform?.gameObject?.GetComponent<InventoryItem>()?.GameItem;
@@ -205,18 +213,35 @@ public class InventoryManager : MonoBehaviour, IPointerDownHandler, IPointerUpHa
             }
         }
     }
+    public List<GameItem> ListItems()
+    {
+        List<GameItem> gameItems = new();
+        foreach (Transform childTransform in SlotsParent.transform)
+        {
+            var slot = childTransform.gameObject.GetComponent<InventorySlot>();
+            if (slot != null && slot.Item != null)
+            {
+                var ii = slot.Item.GetComponent<InventoryItem>();
+                if (ii != null && ii.GameItem != null)
+                {
+                    gameItems.Add(ii.GameItem);
+                }
+            }
+        }
+        return gameItems;
+    }
     public void EquipWeapon(Weapon weapon)
     {
         EquippedWeapon = weapon;
     }
     public void EquipArmor(Armor armor)
     {
-        EquippedArmor[armor.Type] = armor;
+        EquippedArmor[armor.ArmorStats.Type] = armor;
     }
     public void DrinkPotion(Potion potion)
     {
-        GameManager.Instance.Heal(potion.RestoreValue);
-        if (--potion.StackCount == 0)
+        GameManager.Instance.Heal(potion.PotionStats.RestoreValue);
+        if (--potion.Stats.StackCount == 0)
         {
             RemItem(potion);
         }

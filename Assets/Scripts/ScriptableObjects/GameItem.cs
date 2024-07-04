@@ -2,13 +2,18 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class GameItem : ScriptableObject
+public class GameItemStats
 {
     public string Name;
     public float Weight;
-    public Sprite Icon;
     public string Description;
-    public GameObject Prefab;
     public uint StackCount;
     public uint MaxStackCount;
+}
+[Serializable]
+public class GameItem : ScriptableObject
+{
+    public GameItemStats Stats;
+    public Sprite Icon;
+    public GameObject Prefab;
 }

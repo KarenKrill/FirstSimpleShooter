@@ -29,14 +29,14 @@ public class InventoryPropertiesManager : MonoBehaviour
         }
         if (ItemNameText != null)
         {
-            ItemNameText.text = _selectedItem.Name;
+            ItemNameText.text = _selectedItem.Stats.Name;
         }
         switch (_selectedItem)
         {
             case Ammo ammo:
                 if (ItemMainValueText != null)
                 {
-                    ItemMainValueText.text = ammo.Damage.ToString();
+                    ItemMainValueText.text = ammo.AmmoStats.Damage.ToString();
                 }
                 if (ItemMainValueIcon != null)
                 {
@@ -50,7 +50,7 @@ public class InventoryPropertiesManager : MonoBehaviour
             case Armor armor:
                 if (ItemMainValueText != null)
                 {
-                    ItemMainValueText.text = $"+{armor.Defence}";
+                    ItemMainValueText.text = $"+{armor.ArmorStats.Defence}";
                 }
                 if (ItemMainValueIcon != null)
                 {
@@ -64,7 +64,7 @@ public class InventoryPropertiesManager : MonoBehaviour
             case Potion potion:
                 if (ItemMainValueText != null)
                 {
-                    ItemMainValueText.text = $"+{potion.RestoreValue}";
+                    ItemMainValueText.text = $"+{potion.PotionStats.RestoreValue}";
                 }
                 if (ItemMainValueIcon != null)
                 {
@@ -78,7 +78,7 @@ public class InventoryPropertiesManager : MonoBehaviour
             case Weapon weapon:
                 if (ItemMainValueText != null)
                 {
-                    ItemMainValueText.text = weapon.Damage.ToString();
+                    ItemMainValueText.text = weapon.WeaponStats.Damage.ToString();
                 }
                 if (ItemMainValueIcon != null)
                 {
@@ -98,7 +98,7 @@ public class InventoryPropertiesManager : MonoBehaviour
         }
         if (ItemWeightValueText != null)
         {
-            ItemWeightValueText.text = $"{_selectedItem.Weight * _selectedItem.StackCount}kg";
+            ItemWeightValueText.text = $"{_selectedItem.Stats.Weight * _selectedItem.Stats.StackCount}kg";
         }
     }
     private void OnDisable()
@@ -112,7 +112,7 @@ public class InventoryPropertiesManager : MonoBehaviour
             switch (_selectedItem)
             {
                 case Ammo ammo:
-                    ammo.StackCount = ammo.MaxStackCount;
+                    ammo.Stats.StackCount = ammo.Stats.MaxStackCount;
                     break;
                 case Armor armor:
                     InventoryManager.Instance.EquipArmor(armor);
