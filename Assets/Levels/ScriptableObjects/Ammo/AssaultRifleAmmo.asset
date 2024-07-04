@@ -17,7 +17,7 @@ MonoBehaviour:
   Icon: {fileID: 21300000, guid: 08dbb7aeb5333e74c9d204519e365823, type: 3}
   Description: 
   Prefab: {fileID: 0}
-  StackCount: 80
+  StackCount: 40
   MaxStackCount: 100
   WeaponName: AssaultRifle
   Damage: 9
