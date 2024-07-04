@@ -1,6 +1,9 @@
+using Palmmedia.ReportGenerator.Core.Common;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
@@ -28,6 +31,7 @@ public enum PlayerChangeType
 public class GameManager : MonoBehaviour
 {
     private GameState _state;
+    private bool _lastGameIsNotOver = false;
     public Player Player, Enemy;
     public GameItem EnemyWeapon;
     private uint _roundCount = 0;
@@ -44,6 +48,10 @@ public class GameManager : MonoBehaviour
             {
                 _state = value;
                 GameStateChanged?.Invoke(value);
+                if (_state == GameState.Defeat || _state == GameState.Win)
+                {
+                    TryRemoveSavedGameData();
+                }
             }
         }
     }
@@ -58,37 +66,142 @@ public class GameManager : MonoBehaviour
         UpdateHealSlider(Player, PlayerLifeSliderParent);
         UpdateHealSlider(Enemy, EnemyLifeSliderParent);
         State = GameState.PlayerTurn;
-        InventoryManager.Instance?.ClearItems();
-        foreach (var item in Player.Inventory.Items)
+        if (InventoryManager.Instance != null)
         {
-            if (item != null)
+            InventoryManager.Instance.ClearItems();
+            InventoryManager.Instance.EquippedArmor?.Clear();
+            InventoryManager.Instance.EquippedWeapon = null;
+            foreach (var item in Player.Inventory.Items)
             {
-                var cloneItem = Instantiate(item);
-                InventoryManager.Instance?.AddItem(cloneItem);
+                if (item != null)
+                {
+                    var cloneItem = Instantiate(item);
+                    InventoryManager.Instance.AddItem(cloneItem);
+                }
             }
+        }
+    }
+    private string _savedGameDataFileName = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameData.bin");
+    private void LoadGameData()
+    {
+        if (System.IO.File.Exists(_savedGameDataFileName))
+        {
+            // load _roundCount
+            // load Player and his inventory
+            // load Enemy
+            // load GameState
+            /*JsonSerializerOptions options = new JsonSerializerOptions(JsonSerializerDefaults.General);
+            options.Converters.Add(new JsonStringEnumConverter());
+            var jsonStr = System.IO.File.ReadAllText(_savedGameDataFileName);
+            var serializedFields = System.Text.Json.JsonSerializer.Deserialize<List<(string, object)>>(jsonStr, options);*/
+            InventoryManager.Instance?.ClearItems();
+            foreach (var item in Player.Inventory.Items)
+            {
+                if (item != null)
+                {
+                    var cloneItem = Instantiate(item);
+                    InventoryManager.Instance?.AddItem(cloneItem);
+                }
+            }
+        }
+    }
+    /*[Serializable]
+    public class SavedGameItem
+    {
+        public string GameItemType;
+        public string GameItemJsonStr;
+        public SavedGameItem(string gameItemType, string gameItemJsonStr)
+        {
+            GameItemType = gameItemType;
+            GameItemJsonStr = gameItemJsonStr;
+        }
+    }
+    [Serializable]
+    public class SaveGameDataStruct
+    {
+        [SerializeField]
+        public GameState GameState;
+        [SerializeField]
+        public string PlayerJsonStr, EnemyJsonStr;
+        [SerializeField]
+        public uint RoundCount;
+        public List<SavedGameItem> PlayerItemsJsonStrs;
+        public SaveGameDataStruct(GameState gameState, string playerJsonStr, string enemyJsonStr, uint roundCount, List<SavedGameItem> playerItemsJsonStrs)
+        {
+            GameState = gameState;
+            PlayerJsonStr = playerJsonStr;
+            EnemyJsonStr = enemyJsonStr;
+            RoundCount = roundCount;
+            PlayerItemsJsonStrs = playerItemsJsonStrs;
+        }
+    }*/
+    private void SaveGameData()
+    {
+        // save _roundCount
+        // update Player inventory with InventoryManager
+        // save Player and his inventory
+        // save Enemy
+        // save GameState
+        //Dictionary<string, object> serializedFields = new() { { "RoundCount", _roundCount }, { "Player", Player }, { "Enemy", Enemy }, { "GameState", State } };
+        //List<(string, object)> serializedFields = new() { ("RoundCount", _roundCount), ("Player", Player), ("Enemy", Enemy), ("GameState", State) };
+        /*var playerJsonStr = JsonUtility.ToJson(Player, true);
+        var enemyJsonStr = JsonUtility.ToJson(Player, true);
+        List<SavedGameItem> itemsJsonStrs = new();
+        foreach(var item in Player.Inventory.Items)
+        {
+            switch(item)
+            {
+                case Ammo ammo:
+                    itemsJsonStrs.Add(new SavedGameItem(nameof(Ammo), JsonUtility.ToJson(ammo)));
+                    break;
+                case Armor armor:
+                    itemsJsonStrs.Add(new SavedGameItem(nameof(Armor), JsonUtility.ToJson(armor)));
+                    break;
+                case Potion potion:
+                    itemsJsonStrs.Add(new SavedGameItem(nameof(Potion), JsonUtility.ToJson(potion)));
+                    break;
+                case Weapon weapon:
+                    itemsJsonStrs.Add(new SavedGameItem(nameof(Weapon), JsonUtility.ToJson(weapon)));
+                    break;
+                default:
+                    break;
+            }
+        }
+        SaveGameDataStruct serializedFields = new(State, playerJsonStr, enemyJsonStr, _roundCount, itemsJsonStrs);
+        //var jsonStr = JsonUtility.ToJson(Player);
+        var jsonStr = JsonUtility.ToJson(serializedFields, true);
+        System.IO.File.WriteAllText(_savedGameDataFileName, jsonStr);*/
+    }
+    private void TryRemoveSavedGameData()
+    {
+        if (System.IO.File.Exists(_savedGameDataFileName))
+        {
+            System.IO.File.Delete(_savedGameDataFileName);
         }
     }
     public void ContinueGame()
     {
-        State = GameState.PlayerTurn;
+        LoadGameData();
     }
     public void ExitToMenu()
     {
-        // SaveData
+        if (State == GameState.PlayerTurn || State == GameState.EnemyTurn)
+        {
+            SaveGameData();
+        }
         State = GameState.Menu;
     }
     public void Exit()
     {
-        // Save data
+        if (State == GameState.PlayerTurn || State == GameState.EnemyTurn)
+        {
+            SaveGameData();
+        }
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
         Application.Quit();
 #endif
-    }
-    public void UseItem(int playerId, int itemId)
-    {
-        //if item consumable
     }
     private static void UpdateHealSlider(Player player, GameObject sliderParent)
     {
@@ -115,9 +228,9 @@ public class GameManager : MonoBehaviour
                 var ammoCountPerShoot = weapon.AmmoCountPerShoot < weapon.AmmoCount ? weapon.AmmoCountPerShoot : weapon.AmmoCount;
                 float damage = weapon.Damage * ammoCountPerShoot;// calc damage
                 _playerLastAim = _playerLastAim == ArmorType.Headgear ? ArmorType.Cuirass : ArmorType.Headgear;
-                //_playerLastAim = _random.Next(0, 4) == 0 ? ArmorType.Headgear : ArmorType.Cuirass;
-                damage *= _playerLastAim == ArmorType.Headgear ? Player.HeadDamageMultiplier : Player.BodyDamageMultiplier;
-                damage *= ((100f - 5 * (_playerLastAim == ArmorType.Headgear ? Player.HeadDefence : Player.BodyDefence)) / 100f); // armor attack reduction
+                _playerLastAim = _random.Next(0, 3) == 0 ? ArmorType.Headgear : ArmorType.Cuirass;
+                damage *= _playerLastAim == ArmorType.Headgear ? Enemy.HeadDamageMultiplier : Enemy.BodyDamageMultiplier;
+                damage *= ((100f - 5 * (_playerLastAim == ArmorType.Headgear ? Enemy.HeadDefence : Enemy.BodyDefence)) / 100f); // armor attack reduction
                 weapon.AmmoCount -= ammoCountPerShoot;
                 Enemy.Damage(damage);
                 UpdateHealSlider(Enemy, EnemyLifeSliderParent);
@@ -153,12 +266,23 @@ public class GameManager : MonoBehaviour
     }
     public void EnemyAttack()
     {
+        if (InventoryManager.Instance.EquippedArmor != null)
+        {
+            if (InventoryManager.Instance.EquippedArmor.TryGetValue(ArmorType.Headgear, out var headgear))
+            {
+                Player.HeadDefence = headgear.Defence;
+            }
+            if (InventoryManager.Instance.EquippedArmor.TryGetValue(ArmorType.Cuirass, out var cuirass))
+            {
+                Player.BodyDefence = cuirass.Defence;
+            }
+        }
         var weapon = (Weapon)EnemyWeapon;
         float damage = weapon.Damage;
         //_enemyLastAim = _enemyLastAim == ArmorType.Headgear ? ArmorType.Cuirass : ArmorType.Headgear;
-        _enemyLastAim = _random.Next(0, 9) == 0 ? ArmorType.Headgear : ArmorType.Cuirass;
-        damage *= _enemyLastAim == ArmorType.Headgear ? Enemy.HeadDamageMultiplier : Enemy.BodyDamageMultiplier;
-        damage *= ((100f - 5 * (_enemyLastAim == ArmorType.Headgear ? Enemy.HeadDefence : Enemy.BodyDefence)) / 100f); // armor attack reduction
+        _enemyLastAim = _random.Next(0, 3) == 0 ? ArmorType.Headgear : ArmorType.Cuirass;
+        damage *= _enemyLastAim == ArmorType.Headgear ? Player.HeadDamageMultiplier : Player.BodyDamageMultiplier;
+        damage *= ((100f - 5 * (_enemyLastAim == ArmorType.Headgear ? Player.HeadDefence : Player.BodyDefence)) / 100f); // armor attack reduction
         Player.Damage(damage);
         UpdateHealSlider(Player, PlayerLifeSliderParent);
         if (Player.IsDead)
@@ -175,8 +299,16 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
-        Player = Instantiate(Player);
-        Enemy = Instantiate(Enemy);
+        _lastGameIsNotOver = System.IO.File.Exists(_savedGameDataFileName);
+        if (_lastGameIsNotOver)
+        {
+            LoadGameData();
+        }
+        else
+        {
+            Player = Instantiate(Player);
+            Enemy = Instantiate(Enemy);
+        }
     }
     void Start()
     {
