@@ -216,6 +216,9 @@ public class InventoryManager : MonoBehaviour, IPointerDownHandler, IPointerUpHa
     public void DrinkPotion(Potion potion)
     {
         GameManager.Instance.Heal(potion.RestoreValue);
-        RemItem(potion);
+        if (--potion.StackCount == 0)
+        {
+            RemItem(potion);
+        }
     }
 }
