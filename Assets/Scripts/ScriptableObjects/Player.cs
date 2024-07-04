@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 [CreateAssetMenu(fileName = nameof(Player), menuName = "Scriptable Objects/" + nameof(Player))]
 public class Player : ScriptableObject
 {

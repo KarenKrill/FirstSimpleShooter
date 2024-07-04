@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 
+[Serializable]
 public class GameItem : ScriptableObject
 {
     public string Name;

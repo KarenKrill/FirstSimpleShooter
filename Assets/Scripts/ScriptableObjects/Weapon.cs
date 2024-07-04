@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = nameof(Weapon), menuName = "Scriptable Objects/" + nameof(Weapon))]
 [Serializable]
+[CreateAssetMenu(fileName = nameof(Weapon), menuName = "Scriptable Objects/" + nameof(Weapon))]
 public class Weapon : GameItem
 {
     public float Damage;
