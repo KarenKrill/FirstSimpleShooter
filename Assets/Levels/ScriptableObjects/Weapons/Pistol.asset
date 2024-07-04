@@ -12,15 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f68cadf35a9915d428ea8f0d1be00427, type: 3}
   m_Name: Pistol
   m_EditorClassIdentifier: 
-  Name: Pistol
-  Weight: 1
+  Stats:
+    Name: Pistol
+    Weight: 1
+    Description: 
+    StackCount: 1
+    MaxStackCount: 1
   Icon: {fileID: 21300000, guid: 660908a2771104f4b84e9afc28a5305d, type: 3}
-  Description: 
   Prefab: {fileID: 0}
-  StackCount: 1
-  MaxStackCount: 1
-  Damage: 5
-  IsReloadable: 1
-  AmmoCountPerShoot: 1
-  AmmoCount: 10
-  MaxAmmoCount: 10
+  WeaponStats:
+    Damage: 5
+    IsReloadable: 1
+    AmmoCountPerShoot: 1
+    AmmoCount: 10
+    MaxAmmoCount: 10

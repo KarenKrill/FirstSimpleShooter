@@ -12,15 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f68cadf35a9915d428ea8f0d1be00427, type: 3}
   m_Name: AssaultRifle
   m_EditorClassIdentifier: 
-  Name: AssaultRifle
-  Weight: 4
+  Stats:
+    Name: AssaultRifle
+    Weight: 4
+    Description: 
+    StackCount: 1
+    MaxStackCount: 1
   Icon: {fileID: 21300000, guid: bf2da9654cfcc354aa10ec39b4de9754, type: 3}
-  Description: 
   Prefab: {fileID: 0}
-  StackCount: 1
-  MaxStackCount: 1
-  Damage: 3
-  IsReloadable: 1
-  AmmoCountPerShoot: 3
-  AmmoCount: 30
-  MaxAmmoCount: 30
+  WeaponStats:
+    Damage: 3
+    IsReloadable: 1
+    AmmoCountPerShoot: 3
+    AmmoCount: 30
+    MaxAmmoCount: 30

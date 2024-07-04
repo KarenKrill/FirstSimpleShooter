@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94a4724b359b47f41a0e713b3d45629a, type: 3}
   m_Name: BodyArmor
   m_EditorClassIdentifier: 
-  Name: BodyArmor
-  Weight: 10
+  Stats:
+    Name: BodyArmor
+    Weight: 10
+    Description: 
+    StackCount: 1
+    MaxStackCount: 1
   Icon: {fileID: 21300000, guid: ec88fea7c3620d848b18ee17d30c9151, type: 3}
-  Description: 
   Prefab: {fileID: 0}
-  StackCount: 1
-  MaxStackCount: 1
-  Type: 1
-  Defence: 10
+  ArmorStats:
+    Type: 1
+    Defence: 10

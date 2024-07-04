@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8d328c7f765cb944b214c6238397ecb, type: 3}
   m_Name: Player
   m_EditorClassIdentifier: 
-  Name: Player
-  Health: 10
-  MaxHealth: 100
-  HeadDefence: 0
-  BodyDefence: 0
-  HeadDamageMultiplier: 3
-  BodyDamageMultiplier: 1
+  Stats:
+    Name: Player
+    Health: 100
+    MaxHealth: 100
+    HeadDefence: 0
+    BodyDefence: 0
+    HeadDamageMultiplier: 3
+    BodyDamageMultiplier: 1
   Inventory: {fileID: 11400000, guid: 25d7beb302e605b4791424fccf075455, type: 2}

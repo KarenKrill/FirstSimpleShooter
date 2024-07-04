@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a150a1bcad133d469e370d398902f5c, type: 3}
   m_Name: FirstAidKit
   m_EditorClassIdentifier: 
-  Name: FirstAidKit
-  Weight: 1
+  Stats:
+    Name: FirstAidKit
+    Weight: 1
+    Description: 
+    StackCount: 1
+    MaxStackCount: 6
   Icon: {fileID: 21300000, guid: 6b84f734a456f8940b1fac404d08ad98, type: 3}
-  Description: 
   Prefab: {fileID: 0}
-  StackCount: 1
-  MaxStackCount: 6
-  RestoreValue: 50
+  PotionStats:
+    RestoreValue: 50

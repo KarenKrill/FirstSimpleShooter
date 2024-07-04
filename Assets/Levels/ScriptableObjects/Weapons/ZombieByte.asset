@@ -12,15 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f68cadf35a9915d428ea8f0d1be00427, type: 3}
   m_Name: ZombieByte
   m_EditorClassIdentifier: 
-  Name: ZombieByte
-  Weight: 0
+  Stats:
+    Name: ZombieByte
+    Weight: 0
+    Description: 
+    StackCount: 0
+    MaxStackCount: 0
   Icon: {fileID: 0}
-  Description: 
   Prefab: {fileID: 0}
-  StackCount: 1
-  MaxStackCount: 1
-  Damage: 10
-  IsReloadable: 0
-  AmmoCountPerShoot: 1
-  AmmoCount: 0
-  MaxAmmoCount: 0
+  WeaponStats:
+    Damage: 10
+    IsReloadable: 0
+    AmmoCountPerShoot: 0
+    AmmoCount: 0
+    MaxAmmoCount: 0

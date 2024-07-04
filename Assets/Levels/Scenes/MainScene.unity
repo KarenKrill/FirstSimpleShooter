@@ -252,6 +252,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8105135f07545e34e81d8099cd87ebc8, type: 2}
   PlayerLifeSliderParent: {fileID: 211781457}
   EnemyLifeSliderParent: {fileID: 849057637}
+  ContinueMenuButton: {fileID: 179881805}
   _playerLastAim: 0
   _enemyLastAim: 0
 --- !u!1 &10611627
