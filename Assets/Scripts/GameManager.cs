@@ -139,7 +139,12 @@ public class GameManager : MonoBehaviour
                     {
                         State = GameState.Win;
                     }
-                    else Enemy.Health = Enemy.MaxHealth;
+                    else
+                    {
+                        Enemy.Health = Enemy.MaxHealth;
+                        Debug.Log($"Round {_roundCount+1}/{RoundsCount+1}!");
+                    }
+
                     UpdateHealSlider(Enemy, EnemyLifeSliderParent);
                 }
             }

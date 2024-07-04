@@ -11,11 +11,12 @@ public class InventoryItem : MonoBehaviour
     [SerializeField]
     Image _icon;
     [HideInInspector]
-    int _lastStackCount = -1;
+    uint _lastStackCount = uint.MaxValue;
     TextMeshProUGUI _countText;
     [SerializeField]
     GameObject _countTextObject;
     Color _lastTextColor;
+    bool _isEmptyWeaponColor = false;
     public Color TextColor;
     private void Start()
     {
@@ -45,10 +46,21 @@ public class InventoryItem : MonoBehaviour
                 if (GameItem is Weapon weapon)
                 {
                     _countText.enabled = true;
+                    _isEmptyWeaponColor = true;
+                    if (weapon.AmmoCount == 0)
+                    {
+                        _countText.color = Color.red;
+                        _isEmptyWeaponColor = true;
+                    }
+                    else
+                    {
+                        _countText.color = TextColor;
+                        _isEmptyWeaponColor = false;
+                    }
                     _countText.text = $"{weapon.AmmoCount}/{weapon.MaxAmmoCount}";
                 }
             }
-            if (_countText.enabled && _lastTextColor != TextColor)
+            if (_countText.enabled && _lastTextColor != TextColor && !_isEmptyWeaponColor)
             {
                 _lastTextColor = TextColor;
                 _countText.color = TextColor;

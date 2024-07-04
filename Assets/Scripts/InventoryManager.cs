@@ -60,8 +60,8 @@ public class InventoryManager : MonoBehaviour, IPointerDownHandler, IPointerUpHa
                         var sourceGameItem = _dragItemSlot.Item.GetComponent<InventoryItem>()?.GameItem;
                         if (destGameItem.Name == sourceGameItem.Name && destGameItem.StackCount < destGameItem.MaxStackCount)
                         {
-                            int availableDestItemsCount = destGameItem.MaxStackCount - destGameItem.StackCount;
-                            int moveItemsCount = sourceGameItem.StackCount < availableDestItemsCount ? sourceGameItem.StackCount : availableDestItemsCount;
+                            uint availableDestItemsCount = destGameItem.MaxStackCount - destGameItem.StackCount;
+                            uint moveItemsCount = sourceGameItem.StackCount < availableDestItemsCount ? sourceGameItem.StackCount : availableDestItemsCount;
                             destGameItem.StackCount += moveItemsCount;
                             sourceGameItem.StackCount -= moveItemsCount;
                             if (sourceGameItem.StackCount == 0)
@@ -75,9 +75,27 @@ public class InventoryManager : MonoBehaviour, IPointerDownHandler, IPointerUpHa
                         }
                         else
                         {
-                            // swap:
-                            destInventorySlot.PutItem(_dragItemSlot.Item);
-                            _dragItemSlot.PutItem(destInventoryItemParent);
+                            if (destGameItem is Weapon weapon && sourceGameItem is Ammo ammo && ammo.WeaponName == weapon.Name && weapon.AmmoCount < weapon.MaxAmmoCount)
+                            {
+                                var missingAmmoCount = weapon.MaxAmmoCount - weapon.AmmoCount;
+                                uint ammoCount = ammo.StackCount > missingAmmoCount ? missingAmmoCount : ammo.StackCount;
+                                weapon.AmmoCount += ammoCount;
+                                if (ammoCount < ammo.StackCount)
+                                {
+                                    ammo.StackCount -= ammoCount;
+                                    _dragItemSlot.PutItem(_dragItemSlot.Item);
+                                }
+                                else
+                                {
+                                    Destroy(_dragItemSlot.Item);
+                                }
+                            }
+                            else
+                            {
+                                // swap:
+                                destInventorySlot.PutItem(_dragItemSlot.Item);
+                                _dragItemSlot.PutItem(destInventoryItemParent);
+                            }
                         }
                     }
                     else
