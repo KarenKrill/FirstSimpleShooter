@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: InventoryDatabase
   m_EditorClassIdentifier: 
   <Items>k__BackingField:
-  - {fileID: 11400000, guid: 3e5c83b37c29ae94885865168780a898, type: 2}
   - {fileID: 11400000, guid: e07fafd6e3590b74e826890752771419, type: 2}
+  - {fileID: 11400000, guid: 3e5c83b37c29ae94885865168780a898, type: 2}
   - {fileID: 11400000, guid: 845e6653efe011e4e93db94ed397eb5f, type: 2}
-  - {fileID: 11400000, guid: 992d04fc9dc8aa2468f25e1f05f5af53, type: 2}
   - {fileID: 11400000, guid: 3549dfc8fb747e442895c8448fc25680, type: 2}
+  - {fileID: 11400000, guid: 992d04fc9dc8aa2468f25e1f05f5af53, type: 2}
   - {fileID: 11400000, guid: 99b243b3789aa924d95b5bc0ea589585, type: 2}
   - {fileID: 11400000, guid: 860f8bd85f4af684c837fd6febcb8d1d, type: 2}
   - {fileID: 11400000, guid: 7fd0c43f33414d244bfcdd2b3d8c7d23, type: 2}

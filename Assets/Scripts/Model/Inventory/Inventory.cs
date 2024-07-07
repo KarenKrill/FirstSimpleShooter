@@ -1,17 +1,12 @@
-﻿using Assets.Scripts.Model.InventoryItems;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Unity.Collections;
 using UnityEngine;
 
 namespace Assets.Scripts.Model
 {
     [Serializable]
     [CreateAssetMenu(fileName = nameof(Inventory), menuName = nameof(Inventory) + "/" + nameof(Inventory))]
-    public class Inventory : ScriptableObject, ISerializationCallbackReceiver
+    public class Inventory : ScriptableObject
     {
         [field: SerializeField]
         public InventoryDatabase ItemsDatabase { get; private set; }
@@ -41,45 +36,17 @@ namespace Assets.Scripts.Model
         public string Serialize(bool prettyPrint = false) => JsonUtility.ToJson(this, prettyPrint);
         public void Deserialize(string serializedStr) => JsonUtility.FromJsonOverwrite(serializedStr, this);
 
-        #region ISerializationCallbackReceiver
-        public void OnAfterDeserialize()
-        {
-            if (ItemsSlots != null)
-            {
-                foreach (var itemSlot in ItemsSlots)
-                {
-                    if (itemSlot != null)
-                    {
-                        if (itemSlot.Item != null && ItemsDatabase.TryGetItemId(itemSlot.Item, out var id))
-                        {
-                            itemSlot.ItemId = id;
-                        }
-                        else if (itemSlot.ItemId > 0 && ItemsDatabase.TryGetItem(itemSlot.ItemId, out var item))
-                        {
-                            itemSlot.Item = item;
-                        }
-                        else
-                        {
-                            //itemSlot.Item = null;
-                            //itemSlot.ItemId = 0;
-                            //itemSlot.StackCount = 0;
-                            Debug.LogWarning($"{nameof(Inventory)}.{nameof(Inventory.ItemsDatabase)} doesn't contains item with id {itemSlot.ItemId}");
-                        }
-                    }
-                }
-                //JsonUtility.FromJsonOverwrite(_serializedItemsSlots, ItemsSlots[0]);
-            }
-        }
-        public void OnBeforeSerialize() { }
-        #endregion
-
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            if (ItemsSlots.Count > 0 && ItemsDatabase == null)
+            if (ItemsSlots == null)
             {
-                ItemsSlots.Clear();
-                Debug.LogWarning($"{nameof(Inventory)}.{nameof(Inventory.ItemsSlots)} can't be populate while {nameof(Inventory)}.{nameof(Inventory.ItemsDatabase)} is null");
+                return;
+            }
+            if (ItemsSlots.Count > 0 && (ItemsDatabase == null || ItemsDatabase.Items == null || ItemsDatabase.Items.Count <= 0))
+            {
+                //ItemsSlots.Clear();
+                Debug.LogWarning($"\"{this.name}\" {nameof(Inventory)} refers to an empty {nameof(Inventory)}.{nameof(Inventory.ItemsDatabase)}");
             }
             else
             {
@@ -88,21 +55,44 @@ namespace Assets.Scripts.Model
                     var itemSlot = ItemsSlots[i];
                     if (itemSlot != null)
                     {
-                        if (!ItemsDatabase.Contains(itemSlot.ItemId))
+                        if (itemSlot.Item != null && ItemsDatabase.TryGetItemId(itemSlot.Item, out var id))
                         {
-                            ItemsSlots[i].Item = null;
-                            Debug.LogWarning($"{nameof(Inventory)}.{nameof(Inventory.ItemsSlots)} can't contains item which doesn't exists in {nameof(InventoryDatabase)}.{nameof(InventoryDatabase.Items)}");
+                            itemSlot.ItemId = id;
                         }
-                        else if (itemSlot.Item != null)
+                        //else if (itemSlot.ItemId > 0 && ItemsDatabase.TryGetItem(itemSlot.ItemId, out var item))
+                        //{
+                        //    itemSlot.Item = item;
+                        //}
+                        else
+                        {
+                            if (itemSlot.Item != null)
+                            {
+                                Debug.LogWarning($"{nameof(Inventory)} \"{name}\": {nameof(InventoryItem)} \"{itemSlot.Item.name}\" (id:{itemSlot.ItemId}) doesn't exists in {nameof(InventoryDatabase)} \"{ItemsDatabase.name}\"");
+                            }
+                            //else
+                            //{
+                            //    Debug.LogWarning($"{nameof(Inventory)} \"{name}\": {nameof(InventoryItem)} {i} (id:{itemSlot.ItemId}) doesn't exists in {nameof(InventoryDatabase)} \"{ItemsDatabase.name}\"");
+                            //}
+                            itemSlot.Item = null;
+                            itemSlot.ItemId = 0;
+                            itemSlot.StackCount = 0;
+                            continue;
+                        }
+                        if (itemSlot.Item != null)
                         {
                             if (itemSlot.StackCount > itemSlot.Item.MaxStackCount)
                             {
                                 itemSlot.StackCount = itemSlot.Item.MaxStackCount;
                             }
+                            else if (itemSlot.StackCount <= 0)
+                            {
+                                itemSlot.StackCount = 1;
+                            }
                         }
-                        else if(itemSlot.ItemId != 0)
+                        else
                         {
                             itemSlot.ItemId = 0;
+                            itemSlot.StackCount = 0;
                         }
                     }
                 }

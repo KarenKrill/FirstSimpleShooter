@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Scripts.Model
@@ -32,10 +34,10 @@ namespace Assets.Scripts.Model
         public Inventory InventoryConfig { get; private set; }
 
         [field: SerializeField]
-        public Weapon EquippedWeapon { get; set; }
+        public InventoryItems.Weapon EquippedWeapon { get; set; }
 
-        //[field: SerializeField]
-        //public List<Armor> EquippedArmors { get; set; }
+        [field: SerializeField]
+        public List<InventoryItems.Armor> EquippedArmors { get; set; }
 
         private void OnValidate()
         {
@@ -43,6 +45,20 @@ namespace Assets.Scripts.Model
             {
                 Health = MaxHealth;
             }
+            if (!InventoryConfig.ItemsSlots.Select(slot => slot.Item).Where(item => item != null && item is InventoryItems.Weapon).Contains(EquippedWeapon))
+            {
+                EquippedWeapon = null;
+            }
+            var armors = InventoryConfig.ItemsSlots.Select(slot => slot.Item).Where(item => item != null && item is InventoryItems.Armor).ToList();
+            List<InventoryItems.Armor> equippedArmors = new();
+            foreach (var armor in EquippedArmors)
+            {
+                if (armors.Contains(armor))
+                {
+                    equippedArmors.Add(armor);
+                }
+            }
+            EquippedArmors = equippedArmors;
         }
     }
 }

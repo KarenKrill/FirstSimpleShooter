@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.Model
@@ -10,14 +6,14 @@ namespace Assets.Scripts.Model
     [Serializable]
     public class InventorySlot
     {
-        [field: SerializeField]
-        public int ItemId { get; set; }
+        [SerializeField]
+        public int ItemId;
 
-        [field: SerializeField]
-        public InventoryItems.InventoryItem Item { get; set; }
+        [SerializeField]
+        public InventoryItems.InventoryItem Item;
         
-        [field: SerializeField, Min(1)]
-        public int StackCount { get; set; } = 1;
+        [SerializeField, Min(1)]
+        public int StackCount = 1;
         
         public InventorySlot(int itemId, InventoryItems.InventoryItem item, int stackCount)
         {
