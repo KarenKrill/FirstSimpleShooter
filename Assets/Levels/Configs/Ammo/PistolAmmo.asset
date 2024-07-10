@@ -16,6 +16,6 @@ MonoBehaviour:
   <Description>k__BackingField: 
   <Weight>k__BackingField: 0.01
   <MaxStackCount>k__BackingField: 50
-  <Icon>k__BackingField: {fileID: 0}
+  <Icon>k__BackingField: {fileID: 21300000, guid: 390e94fb71e42fb449620f3752a5f1a2, type: 3}
   <WeaponName>k__BackingField: Pistol
   <Damage>k__BackingField: 5

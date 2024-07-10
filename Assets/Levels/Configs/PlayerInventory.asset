@@ -12,95 +12,97 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 494d19c59ea769b4cb22ad5174865740, type: 3}
   m_Name: PlayerInventory
   m_EditorClassIdentifier: 
-  <ItemsDatabase>k__BackingField: {fileID: 11400000, guid: 0729bd715bddc2b4ab2e7fdc01518a50, type: 2}
-  <ItemsSlots>k__BackingField:
+  _itemsDatabase: {fileID: 11400000, guid: 0729bd715bddc2b4ab2e7fdc01518a50, type: 2}
+  _itemsSlots:
   - ItemId: 1
     Item: {fileID: 11400000, guid: e07fafd6e3590b74e826890752771419, type: 2}
-    StackCount: 1
+    _stackCount: 1
+  - ItemId: 2
+    Item: {fileID: 11400000, guid: 3e5c83b37c29ae94885865168780a898, type: 2}
+    _stackCount: 1
+  - ItemId: 4
+    Item: {fileID: 11400000, guid: 3549dfc8fb747e442895c8448fc25680, type: 2}
+    _stackCount: 1
   - ItemId: 5
     Item: {fileID: 11400000, guid: 992d04fc9dc8aa2468f25e1f05f5af53, type: 2}
-    StackCount: 1
+    _stackCount: 1
+  - ItemId: 10
+    Item: {fileID: 11400000, guid: 87bed3c7890a6644192524529ecaa37b, type: 2}
+    _stackCount: 4
   - ItemId: 6
     Item: {fileID: 11400000, guid: 99b243b3789aa924d95b5bc0ea589585, type: 2}
-    StackCount: 1
+    _stackCount: 1
   - ItemId: 7
     Item: {fileID: 11400000, guid: 860f8bd85f4af684c837fd6febcb8d1d, type: 2}
-    StackCount: 1
+    _stackCount: 1
   - ItemId: 8
     Item: {fileID: 11400000, guid: 7fd0c43f33414d244bfcdd2b3d8c7d23, type: 2}
-    StackCount: 1
+    _stackCount: 1
   - ItemId: 9
     Item: {fileID: 11400000, guid: 00d788fc940dfd34b8a831bf03405c02, type: 2}
-    StackCount: 1
-  - ItemId: 5
-    Item: {fileID: 11400000, guid: 992d04fc9dc8aa2468f25e1f05f5af53, type: 2}
-    StackCount: 40
-  - ItemId: 4
-    Item: {fileID: 11400000, guid: 3549dfc8fb747e442895c8448fc25680, type: 2}
-    StackCount: 15
+    _stackCount: 1
   - ItemId: 10
     Item: {fileID: 11400000, guid: 87bed3c7890a6644192524529ecaa37b, type: 2}
-    StackCount: 1
-  - ItemId: 5
-    Item: {fileID: 11400000, guid: 992d04fc9dc8aa2468f25e1f05f5af53, type: 2}
-    StackCount: 15
+    _stackCount: 1
   - ItemId: 4
     Item: {fileID: 11400000, guid: 3549dfc8fb747e442895c8448fc25680, type: 2}
-    StackCount: 20
-  - ItemId: 10
-    Item: {fileID: 11400000, guid: 87bed3c7890a6644192524529ecaa37b, type: 2}
-    StackCount: 1
+    _stackCount: 49
+  - ItemId: 5
+    Item: {fileID: 11400000, guid: 992d04fc9dc8aa2468f25e1f05f5af53, type: 2}
+    _stackCount: 1
+  - ItemId: 5
+    Item: {fileID: 11400000, guid: 992d04fc9dc8aa2468f25e1f05f5af53, type: 2}
+    _stackCount: 60
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
-    StackCount: 0
-  - ItemId: 0
-    Item: {fileID: 0}
-    StackCount: 0
+    _stackCount: 0
+  _minSlotsCount: 0
+  _maxSlotsCount: 0

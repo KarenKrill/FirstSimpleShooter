@@ -201,7 +201,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b69305a26b464142a9a091a98ddf794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GameItem: {fileID: 0}
   _icon: {fileID: 48004113075450026}
   _countTextObject: {fileID: 7550594378023200255}
   TextColor: {r: 0, g: 0, b: 0, a: 1}
