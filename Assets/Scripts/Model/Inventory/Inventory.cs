@@ -98,8 +98,8 @@ namespace Assets.Scripts.Model
                         slot.RemoveCount(count);
                         if (slot.StackCount == 0)
                         {
-                            slot.Clear();
                             slot.StackCountChanged -= OnSlotStackCountChanged;
+                            slot.Clear();
                             ItemRemoved?.Invoke(item);
                         }
                         return;
