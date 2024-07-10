@@ -10,9 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 494d19c59ea769b4cb22ad5174865740, type: 3}
-  m_Name: Inventory
+  m_Name: EnemyInventory
   m_EditorClassIdentifier: 
   _itemsDatabase: {fileID: 11400000, guid: 0729bd715bddc2b4ab2e7fdc01518a50, type: 2}
-  _itemsSlots: []
-  _minSlotsCount: 0
-  _maxSlotsCount: 0
+  _itemsSlots:
+  - ItemId: 3
+    Item: {fileID: 11400000, guid: 845e6653efe011e4e93db94ed397eb5f, type: 2}
+    _stackCount: 1

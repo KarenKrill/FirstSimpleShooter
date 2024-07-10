@@ -3632,8 +3632,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01de25633164d60489f53b05b3432a63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerConfig: {fileID: 11400000, guid: 7d036c302ec859543a9c305f11cfaca4, type: 2}
-  _enemyConfig: {fileID: 11400000, guid: 5576c6724581d894b9c1c764d96a8aee, type: 2}
+  _playerDefaultConfig: {fileID: 11400000, guid: 7d036c302ec859543a9c305f11cfaca4, type: 2}
+  _playerDefaultInventory: {fileID: 11400000, guid: 5fbbdd47813200341af84b621de0193b, type: 2}
+  _enemyDefaultInventory: {fileID: 11400000, guid: 26e24a587c0601c44926f63308f70b8b, type: 2}
+  _enemyDefaultConfig: {fileID: 11400000, guid: 5576c6724581d894b9c1c764d96a8aee, type: 2}
+  _weaponTemplate: {fileID: 11400000, guid: c483ad4d136ce514ab715c0f2f3b8c61, type: 2}
+  _armorTemplate: {fileID: 11400000, guid: 837fc067521986c4b85e9afa6b0122d5, type: 2}
   _roundsCount: 3
 --- !u!224 &631649481 stripped
 RectTransform:
