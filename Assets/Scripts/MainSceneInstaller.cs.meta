@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 01de25633164d60489f53b05b3432a63
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - _playerConfig: {instanceID: 0}
+  - _enemyConfig: {instanceID: 0}
+  - Inventory: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
