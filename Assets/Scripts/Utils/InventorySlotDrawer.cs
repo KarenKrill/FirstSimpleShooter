@@ -18,7 +18,9 @@ namespace Assets.Scripts.Utils
         {
             var itemProperty = property.FindPropertyRelative(nameof(Model.InventorySlot.Item));
             var itemIdProperty = property.FindPropertyRelative(nameof(Model.InventorySlot.ItemId));
-            var stackCountProperty = property.FindPropertyRelative(nameof(Model.InventorySlot.StackCount));
+#pragma warning disable 0618
+            var stackCountProperty = property.FindPropertyRelative(nameof(Model.InventorySlot._stackCount));
+#pragma warning restore 0618
             GUI.skin.box.CalcMinMaxWidth(label, out _, out var ItemLabelWidth);
             GUI.skin.box.CalcMinMaxWidth(_itemIdLabel, out _, out var ItemIdLabelWidth);
             GUI.skin.box.CalcMinMaxWidth(_stackCountLabel, out _, out var StackCountLabelWidth);
@@ -44,7 +46,7 @@ namespace Assets.Scripts.Utils
             {
                 position.width = ItemIdLabelWidth;
                 EditorGUIUtility.labelWidth = ItemIdLabelWidth;
-                EditorGUI.LabelField(position, nameof(Model.InventorySlot.ItemId));
+                EditorGUI.LabelField(position, _itemIdLabel);
                 position.x += HorizontalMargin + position.width;
 
                 position.width = ItemIdWidth;
@@ -61,10 +63,10 @@ namespace Assets.Scripts.Utils
 
             position.width = StackCountLabelWidth + StackCountWidth;
             EditorGUIUtility.labelWidth = StackCountLabelWidth;
-            EditorGUI.BeginProperty(position, label, stackCountProperty);
+            EditorGUI.BeginProperty(position, _stackCountLabel, stackCountProperty);
             {
                 EditorGUI.BeginChangeCheck();
-                int newVal = EditorGUI.IntField(position, nameof(Model.InventorySlot.StackCount), stackCountProperty.intValue);
+                int newVal = EditorGUI.IntField(position, _stackCountLabel, stackCountProperty.intValue);
                 if (EditorGUI.EndChangeCheck())
                 {
                     stackCountProperty.intValue = newVal;
