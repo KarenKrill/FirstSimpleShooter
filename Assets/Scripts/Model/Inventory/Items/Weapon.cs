@@ -12,7 +12,7 @@ namespace Assets.Scripts.Model.InventoryItems
         public float Damage { get; private set; }
 
         [field: SerializeField, Min(0)]
-        public int AmmoCount { get; private set; }
+        public int AmmoCount { get; set; }
 
         [field: SerializeField, Min(0)]
         public int MaxAmmoCount { get; private set; }
