@@ -10,6 +10,7 @@ namespace Assets.Scripts
         private static readonly string AppDirectory = Application.dataPath; // Application.persistentDataPath
         private static readonly string SavedGameDataFileName = Path.Combine(AppDirectory, "GameData.json");
         private GameData _defaultGameData, _gameData;
+        private Inventory _inventory;
         private GameDataManager() { }
         private static Lazy<GameDataManager> _instance = new(() => new());
         public static GameDataManager Instance => _instance.Value;
@@ -38,14 +39,42 @@ namespace Assets.Scripts
             Model.Player playerClone = null, enemyClone = null;
             playerClone = UnityEngine.Object.Instantiate(_defaultGameData.Player);
             playerClone.InventoryConfig = UnityEngine.Object.Instantiate(_defaultGameData.Player.InventoryConfig);
+            int i = 0;
+            foreach (var slot in _defaultGameData.Player.InventoryConfig.ItemsSlots)
+            {
+                if (slot != null && slot.Item != null)
+                {
+                    var itemClone = UnityEngine.Object.Instantiate(slot.Item);
+                    playerClone.InventoryConfig.SetItem(i, slot.Item, slot.StackCount);
+                }
+                i++;
+            }
             enemyClone = UnityEngine.Object.Instantiate(_defaultGameData.Enemy);
             enemyClone.InventoryConfig = UnityEngine.Object.Instantiate(_defaultGameData.Enemy.InventoryConfig);
-            if(_gameData != null)
+            i = 0;
+            foreach (var slot in _defaultGameData.Enemy.InventoryConfig.ItemsSlots)
+            {
+                if (slot != null && slot.Item != null)
+                {
+                    var itemClone = UnityEngine.Object.Instantiate(slot.Item);
+                    enemyClone.InventoryConfig.SetItem(i, slot.Item, slot.StackCount);
+                }
+                i++;
+            }
+            if (_gameData != null)
             {
                 if (_gameData.Player != null)
                 {
                     if (_gameData.Player.InventoryConfig != null)
                     {
+                        foreach (var slot in _gameData.Player.InventoryConfig.ItemsSlots)
+                        {
+                            if (slot != null && slot.Item != null)
+                            {
+                                UnityEngine.Object.Destroy(slot.Item);
+                                slot.Clear();
+                            }
+                        }
                         UnityEngine.Object.Destroy(_gameData.Player.InventoryConfig);
                     }
                     UnityEngine.Object.Destroy(_gameData.Player);
@@ -54,6 +83,14 @@ namespace Assets.Scripts
                 {
                     if (_gameData.Enemy.InventoryConfig != null)
                     {
+                        foreach (var slot in _gameData.Enemy.InventoryConfig.ItemsSlots)
+                        {
+                            if (slot != null && slot.Item != null)
+                            {
+                                UnityEngine.Object.Destroy(slot.Item);
+                                slot.Clear();
+                            }
+                        }
                         UnityEngine.Object.Destroy(_gameData.Enemy.InventoryConfig);
                     }
                     UnityEngine.Object.Destroy(_gameData.Enemy);

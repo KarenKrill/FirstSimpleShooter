@@ -40,13 +40,13 @@ namespace Assets.Scripts.Model
 
         [SerializeField]
         private string _serializedInventory;
-        [field: SerializeField]
         public Inventory InventoryConfig { get; set; }
 
         [SerializeField]
         private string _serializedEquippedWeapon;
-        [field: SerializeField]
         public Weapon EquippedWeapon { get; set; }
+        public Weapon WeaponTemplate { get; set; }
+        public Armor ArmorTemplate { get; set; }
 
         [SerializeField]
         private string _serializedEquippedArmors;
@@ -57,6 +57,10 @@ namespace Assets.Scripts.Model
             if (InventoryConfig != null && !string.IsNullOrEmpty(_serializedInventory))
             {
                 JsonUtility.FromJsonOverwrite(_serializedInventory, InventoryConfig);
+            }
+            if (EquippedWeapon == null)
+            {
+                EquippedWeapon = Instantiate(WeaponTemplate);
             }
             if (EquippedWeapon != null && !string.IsNullOrEmpty(_serializedEquippedWeapon))
             {
