@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -7,6 +8,7 @@ using UnityEngine.UI;
 
 public class InventoryPropertiesManager : MonoBehaviour
 {
+    public InventoryPanel InventoryPanel;
     public GameObject ClickCloseObject;
     public Image ItemImage;
     public TextMeshProUGUI ItemNameText;
@@ -19,24 +21,24 @@ public class InventoryPropertiesManager : MonoBehaviour
     public Sprite HealSprite;
     public Sprite DefenceSprite;
     public Sprite WeightSprite;
-    GameItem _selectedItem;
+    Assets.Scripts.Model.InventorySlot _selectedItemSlot;
     private void OnEnable()
     {
-        _selectedItem = InventoryManager.Instance.SelectedGameItem;
+        _selectedItemSlot = InventoryPanel.SelectedGameItemSlot;
         if (ItemImage != null)
         {
-            ItemImage.sprite = _selectedItem.Icon;
+            ItemImage.sprite = _selectedItemSlot.Item.Icon;
         }
         if (ItemNameText != null)
         {
-            ItemNameText.text = _selectedItem.Stats.Name;
+            ItemNameText.text = _selectedItemSlot.Item.Name;
         }
-        switch (_selectedItem)
+        switch (_selectedItemSlot.Item)
         {
-            case Ammo ammo:
+            case Assets.Scripts.Model.InventoryItems.Ammo ammo:
                 if (ItemMainValueText != null)
                 {
-                    ItemMainValueText.text = ammo.AmmoStats.Damage.ToString();
+                    ItemMainValueText.text = ammo.Damage.ToString();
                 }
                 if (ItemMainValueIcon != null)
                 {
@@ -47,10 +49,10 @@ public class InventoryPropertiesManager : MonoBehaviour
                     ActionText.text = "Buy";
                 }
                 break;
-            case Armor armor:
+            case Assets.Scripts.Model.InventoryItems.Armor armor:
                 if (ItemMainValueText != null)
                 {
-                    ItemMainValueText.text = $"+{armor.ArmorStats.Defence}";
+                    ItemMainValueText.text = $"+{armor.Defence}";
                 }
                 if (ItemMainValueIcon != null)
                 {
@@ -61,10 +63,10 @@ public class InventoryPropertiesManager : MonoBehaviour
                     ActionText.text = "Equip";
                 }
                 break;
-            case Potion potion:
+            case Assets.Scripts.Model.InventoryItems.Potion potion:
                 if (ItemMainValueText != null)
                 {
-                    ItemMainValueText.text = $"+{potion.PotionStats.RestoreValue}";
+                    ItemMainValueText.text = $"+{potion.RestoreValue}";
                 }
                 if (ItemMainValueIcon != null)
                 {
@@ -75,10 +77,10 @@ public class InventoryPropertiesManager : MonoBehaviour
                     ActionText.text = "Drink";
                 }
                 break;
-            case Weapon weapon:
+            case Assets.Scripts.Model.InventoryItems.Weapon weapon:
                 if (ItemMainValueText != null)
                 {
-                    ItemMainValueText.text = weapon.WeaponStats.Damage.ToString();
+                    ItemMainValueText.text = weapon.Damage.ToString();
                 }
                 if (ItemMainValueIcon != null)
                 {
@@ -98,30 +100,35 @@ public class InventoryPropertiesManager : MonoBehaviour
         }
         if (ItemWeightValueText != null)
         {
-            ItemWeightValueText.text = $"{_selectedItem.Stats.Weight * _selectedItem.Stats.StackCount}kg";
+            ItemWeightValueText.text = $"{_selectedItemSlot.Item.Weight * _selectedItemSlot.StackCount}kg";
         }
     }
     private void OnDisable()
     {
-        _selectedItem = null;
+        _selectedItemSlot = null;
     }
     public void OnUseButtonClick()
     {
-        if (_selectedItem != null)
+        if (_selectedItemSlot != null)
         {
-            switch (_selectedItem)
+            switch (_selectedItemSlot.Item)
             {
-                case Ammo ammo:
-                    ammo.Stats.StackCount = ammo.Stats.MaxStackCount;
+                case Assets.Scripts.Model.InventoryItems.Ammo ammo:
+                    _selectedItemSlot.StackCount = ammo.MaxStackCount;
                     break;
-                case Armor armor:
-                    InventoryManager.Instance.EquipArmor(armor);
+                case Assets.Scripts.Model.InventoryItems.Armor armor:
+                    InventoryPanel.EquipArmor(armor);
                     break;
-                case Potion potion:
-                    InventoryManager.Instance.DrinkPotion(potion);
+                case Assets.Scripts.Model.InventoryItems.Potion potion:
+                    InventoryPanel.DrinkPotion(potion);
+                    _selectedItemSlot.RemoveCount(1);
+                    if (_selectedItemSlot.StackCount == 0)
+                    {
+                        _selectedItemSlot.Clear();
+                    }
                     break;
-                case Weapon weapon:
-                    InventoryManager.Instance.EquipWeapon(weapon);
+                case Assets.Scripts.Model.InventoryItems.Weapon weapon:
+                    InventoryPanel.EquipWeapon(weapon);
                     break;
                 default:
                     break;
@@ -131,7 +138,7 @@ public class InventoryPropertiesManager : MonoBehaviour
     }
     public void OnRemoveButtonClick()
     {
-        InventoryManager.Instance.RemItem(_selectedItem);
+        InventoryPanel.RemItem(_selectedItemSlot.Item);
         gameObject.SetActive(false);
     }
 }
