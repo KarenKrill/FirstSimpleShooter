@@ -17,7 +17,8 @@ MonoBehaviour:
   <Weight>k__BackingField: 1
   <MaxStackCount>k__BackingField: 1
   <Icon>k__BackingField: {fileID: 21300000, guid: 660908a2771104f4b84e9afc28a5305d, type: 3}
+  _isEquipped: 0
   <Damage>k__BackingField: 5
-  <AmmoCount>k__BackingField: 10
+  _ammoCount: 8
   <MaxAmmoCount>k__BackingField: 10
   <AmmoCountPerShoot>k__BackingField: 1

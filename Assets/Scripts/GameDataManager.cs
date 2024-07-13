@@ -36,31 +36,8 @@ namespace Assets.Scripts
         }
         public void ResetToDefaults()
         {
-            Model.Player playerClone = null, enemyClone = null;
-            playerClone = UnityEngine.Object.Instantiate(_defaultGameData.Player);
-            playerClone.InventoryConfig = UnityEngine.Object.Instantiate(_defaultGameData.Player.InventoryConfig);
-            int i = 0;
-            foreach (var slot in _defaultGameData.Player.InventoryConfig.ItemsSlots)
-            {
-                if (slot != null && slot.Item != null)
-                {
-                    var itemClone = UnityEngine.Object.Instantiate(slot.Item);
-                    playerClone.InventoryConfig.SetItem(i, slot.Item, slot.StackCount);
-                }
-                i++;
-            }
-            enemyClone = UnityEngine.Object.Instantiate(_defaultGameData.Enemy);
-            enemyClone.InventoryConfig = UnityEngine.Object.Instantiate(_defaultGameData.Enemy.InventoryConfig);
-            i = 0;
-            foreach (var slot in _defaultGameData.Enemy.InventoryConfig.ItemsSlots)
-            {
-                if (slot != null && slot.Item != null)
-                {
-                    var itemClone = UnityEngine.Object.Instantiate(slot.Item);
-                    enemyClone.InventoryConfig.SetItem(i, slot.Item, slot.StackCount);
-                }
-                i++;
-            }
+            Player playerClone = _defaultGameData.Player.Clone();
+            Player enemyClone = _defaultGameData.Enemy.Clone();
             if (_gameData != null)
             {
                 if (_gameData.Player != null)

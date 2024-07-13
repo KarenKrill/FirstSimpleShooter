@@ -8,6 +8,8 @@ using UnityEngine.UI;
 
 public class InventoryPropertiesManager : MonoBehaviour
 {
+    [SerializeField]
+    private Button _closeButton;
     public InventoryPanel InventoryPanel;
     public GameObject ClickCloseObject;
     public Image ItemImage;
@@ -22,6 +24,10 @@ public class InventoryPropertiesManager : MonoBehaviour
     public Sprite DefenceSprite;
     public Sprite WeightSprite;
     Assets.Scripts.Model.InventorySlot _selectedItemSlot;
+    private void OnCloseButtonClick()
+    {
+        gameObject.SetActive(false);
+    }
     private void OnEnable()
     {
         _selectedItemSlot = InventoryPanel.SelectedGameItemSlot;
@@ -102,9 +108,17 @@ public class InventoryPropertiesManager : MonoBehaviour
         {
             ItemWeightValueText.text = $"{_selectedItemSlot.Item.Weight * _selectedItemSlot.StackCount}kg";
         }
+        if (_closeButton != null)
+        {
+            _closeButton.onClick.AddListener(OnCloseButtonClick);
+        }
     }
     private void OnDisable()
     {
+        if (_closeButton != null)
+        {
+            _closeButton.onClick.RemoveListener(OnCloseButtonClick);
+        }
         _selectedItemSlot = null;
     }
     public void OnUseButtonClick()
@@ -124,6 +138,7 @@ public class InventoryPropertiesManager : MonoBehaviour
                     _selectedItemSlot.RemoveCount(1);
                     if (_selectedItemSlot.StackCount == 0)
                     {
+                        InventoryPanel.RemItem(potion);
                         _selectedItemSlot.Clear();
                     }
                     break;

@@ -8,8 +8,8 @@ namespace Assets.Scripts.Model
     [CreateAssetMenu(fileName = nameof(Inventory), menuName = nameof(Inventory) + "/" + nameof(Inventory))]
     public class Inventory : ScriptableObject
     {
-        [SerializeField]
-        private InventoryDatabase _itemsDatabase;
+        [field: SerializeField]
+        public InventoryDatabase ItemsDatabase;
 
         [SerializeField]
         private List<InventorySlot> _itemsSlots = new();
@@ -39,7 +39,7 @@ namespace Assets.Scripts.Model
                 {
                     RemoveItemAt(slotIndex);
                 }
-                if (_itemsDatabase.TryGetItemId(item, out int id))
+                if (ItemsDatabase.TryGetItemId(item, out int id))
                 {
                     var itemSlot = new InventorySlot(id, item, count);
                     itemSlot.StackCountChanged += OnSlotStackCountChanged;
@@ -60,7 +60,7 @@ namespace Assets.Scripts.Model
                         return;
                     }
                 }
-                if (_itemsDatabase.TryGetItemId(item, out int id))
+                if (ItemsDatabase.TryGetItemId(item, out int id))
                 {
                     var itemSlot = new InventorySlot(id, item, count);
                     itemSlot.StackCountChanged += OnSlotStackCountChanged;
@@ -172,10 +172,10 @@ namespace Assets.Scripts.Model
             {
                 return;
             }
-            if (_itemsSlots.Count > 0 && (_itemsDatabase == null || _itemsDatabase.Items == null || _itemsDatabase.Items.Count <= 0))
+            if (_itemsSlots.Count > 0 && (ItemsDatabase == null || ItemsDatabase.Items == null || ItemsDatabase.Items.Count <= 0))
             {
                 //_itemsSlots.Clear();
-                Debug.LogWarning($"\"{this.name}\" {nameof(Inventory)} refers to an empty {nameof(Inventory)}.{nameof(Inventory._itemsDatabase)}");
+                Debug.LogWarning($"\"{this.name}\" {nameof(Inventory)} refers to an empty {nameof(Inventory)}.{nameof(Inventory.ItemsDatabase)}");
             }
             else
             {
@@ -184,7 +184,7 @@ namespace Assets.Scripts.Model
                     var itemSlot = _itemsSlots[i];
                     if (itemSlot != null)
                     {
-                        if (itemSlot.Item != null && _itemsDatabase.TryGetItemId(itemSlot.Item, out var id))
+                        if (itemSlot.Item != null && ItemsDatabase.TryGetItemId(itemSlot.Item, out var id))
                         {
                             itemSlot.ItemId = id;
                         }
@@ -196,7 +196,7 @@ namespace Assets.Scripts.Model
                         {
                             if (itemSlot.Item != null)
                             {
-                                Debug.LogWarning($"{nameof(Inventory)} \"{name}\": {nameof(InventoryItemComponent)} \"{itemSlot.Item.name}\" (id:{itemSlot.ItemId}) doesn't exists in {nameof(InventoryDatabase)} \"{_itemsDatabase.name}\"");
+                                Debug.LogWarning($"{nameof(Inventory)} \"{name}\": {nameof(InventoryItemComponent)} \"{itemSlot.Item.name}\" (id:{itemSlot.ItemId}) doesn't exists in {nameof(InventoryDatabase)} \"{ItemsDatabase.name}\"");
                             }
                             //else
                             //{

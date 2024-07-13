@@ -1,6 +1,7 @@
 using Assets.Scripts;
 using Assets.Scripts.Model;
 using Assets.Scripts.Model.InventoryItems;
+using Assets.Scripts.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,21 +13,13 @@ public class MainSceneInstaller : MonoBehaviour
     [SerializeField]
     private Player _playerDefaultConfig;
     [SerializeField]
-    private Inventory _playerDefaultInventory;
-    [SerializeField]
-    private Inventory _enemyDefaultInventory;
-    [SerializeField]
     private Player _enemyDefaultConfig;
-    [SerializeField]
-    private Weapon _weaponTemplate;
-    [SerializeField]
-    private Armor _armorTemplate;
     [SerializeField]
     private int _roundsCount = 3;
     bool _initializedIsFinished = false;
     private void Awake()
     {
-        GameDataManager.Instance.Init(new(GameState.Menu, 0, _roundsCount, _playerDefaultConfig, _enemyDefaultConfig, _weaponTemplate, _armorTemplate, _playerDefaultInventory, _enemyDefaultInventory));
+        GameDataManager.Instance.Init(new(GameState.Menu, 0, _roundsCount, _playerDefaultConfig, _enemyDefaultConfig));
     }
     private void Update()
     {

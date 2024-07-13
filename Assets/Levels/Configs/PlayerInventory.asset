@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 494d19c59ea769b4cb22ad5174865740, type: 3}
   m_Name: PlayerInventory
   m_EditorClassIdentifier: 
-  _itemsDatabase: {fileID: 11400000, guid: 0729bd715bddc2b4ab2e7fdc01518a50, type: 2}
+  ItemsDatabase: {fileID: 11400000, guid: 0729bd715bddc2b4ab2e7fdc01518a50, type: 2}
   _itemsSlots:
   - ItemId: 1
     Item: {fileID: 11400000, guid: e07fafd6e3590b74e826890752771419, type: 2}
@@ -104,5 +104,3 @@ MonoBehaviour:
   - ItemId: 0
     Item: {fileID: 0}
     _stackCount: 0
-  _minSlotsCount: 0
-  _maxSlotsCount: 0

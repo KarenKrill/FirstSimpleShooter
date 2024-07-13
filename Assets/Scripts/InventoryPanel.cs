@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
@@ -143,6 +144,7 @@ namespace Assets.Scripts
                 else _renderingCamera = canvas.worldCamera;
             }
         }
+
         public void OnEnable() => TryStartInventoryMonitorIfStopped();
         public void OnDisable() => TryStopInventoryMonitorIfStarted();
         private void Update()
@@ -317,12 +319,20 @@ namespace Assets.Scripts
             }
             foreach (Transform itemTransform in _itemsParent.transform)
             {
-                var item = itemTransform?.gameObject?.GetComponent<InventoryItemComponent>()?.Item;
-                if (item != null && item == gameItem)
+                if (itemTransform.gameObject != null)
                 {
-                    Destroy(itemTransform.gameObject);
+                    var itemComponent = itemTransform.gameObject.GetComponent<InventoryItemComponent>();
+                    if (itemComponent != null)
+                    {
+                        var item = itemComponent.Item;
+                        if (item != null && item == gameItem)
+                        {
+                            Destroy(itemTransform.gameObject);
+                        }
+                    }
                 }
             }
+            GameDataManager.Instance.GameData.Player.InventoryConfig.RemoveItem(gameItem);
         }
         public void ClearItems()
         {
@@ -362,11 +372,21 @@ namespace Assets.Scripts
         }
         public void EquipWeapon(Weapon weapon)
         {
+            if (GameDataManager.Instance.GameData.Player.EquippedWeapon != null)
+            {
+                GameDataManager.Instance.GameData.Player.EquippedWeapon.IsEquipped = false;
+            }
             GameDataManager.Instance.GameData.Player.EquippedWeapon = weapon;
+            weapon.IsEquipped = true;
         }
         public void EquipArmor(Armor armor)
         {
+            if (GameDataManager.Instance.GameData.Player.EquippedArmors.TryGetValue(armor.Type, out var prevArmor))
+            {
+                prevArmor.IsEquipped = false;
+            }
             GameDataManager.Instance.GameData.Player.EquippedArmors[armor.Type] = armor;
+            armor.IsEquipped = true;
         }
         public void DrinkPotion(Potion potion)
         {

@@ -9,7 +9,7 @@ namespace Assets.Scripts.Model.InventoryItems
     {
         [field: Header(nameof(Potion))]
         [field: SerializeField, Min(0)]
-        public float RestoreValue { get; private set; }
+        public float RestoreValue { get; set; }
     }
 
 }

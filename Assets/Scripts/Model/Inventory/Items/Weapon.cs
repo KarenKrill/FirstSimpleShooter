@@ -11,8 +11,21 @@ namespace Assets.Scripts.Model.InventoryItems
         [field: SerializeField, Min(0)]
         public float Damage { get; private set; }
 
-        [field: SerializeField, Min(0)]
-        public int AmmoCount { get; set; }
+        [SerializeField, Min(0)]
+        private int _ammoCount = 0;
+        public int AmmoCount
+        {
+            get => _ammoCount;
+            set
+            {
+                if (_ammoCount != value)
+                {
+                    _ammoCount = value;
+                    AmmoCountChanged?.Invoke(this);
+                }
+            }
+        }
+        public Action<Weapon> AmmoCountChanged;
 
         [field: SerializeField, Min(0)]
         public int MaxAmmoCount { get; private set; }
