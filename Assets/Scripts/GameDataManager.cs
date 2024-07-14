@@ -44,11 +44,15 @@ namespace Assets.Scripts
                 {
                     if (_gameData.Player.InventoryConfig != null)
                     {
+                        foreach (var item in _gameData.Player.InventoryConfig.ItemsDatabase.Items)
+                        {
+                            UnityEngine.Object.Destroy(item);
+                        }
+                        UnityEngine.Object.Destroy(_gameData.Player.InventoryConfig.ItemsDatabase);
                         foreach (var slot in _gameData.Player.InventoryConfig.ItemsSlots)
                         {
-                            if (slot != null && slot.Item != null)
+                            if (slot != null)
                             {
-                                UnityEngine.Object.Destroy(slot.Item);
                                 slot.Clear();
                             }
                         }
@@ -60,11 +64,15 @@ namespace Assets.Scripts
                 {
                     if (_gameData.Enemy.InventoryConfig != null)
                     {
+                        foreach (var item in _gameData.Enemy.InventoryConfig.ItemsDatabase.Items)
+                        {
+                            UnityEngine.Object.Destroy(item);
+                        }
+                        UnityEngine.Object.Destroy(_gameData.Enemy.InventoryConfig.ItemsDatabase);
                         foreach (var slot in _gameData.Enemy.InventoryConfig.ItemsSlots)
                         {
-                            if (slot != null && slot.Item != null)
+                            if (slot != null)
                             {
-                                UnityEngine.Object.Destroy(slot.Item);
                                 slot.Clear();
                             }
                         }

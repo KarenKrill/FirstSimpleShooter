@@ -30,7 +30,7 @@ namespace Assets.Scripts
         [SerializeField, Min(0)]
         private float _horizontalMargin, _verticalMargin;
         [SerializeField, Min(1)]
-        private int _columnsCount = 1, _rowsCount = 1;
+        private int _columnsCount = 1;
         private Model.Inventory _inventory;
         public Model.Inventory Inventory
         {
@@ -55,7 +55,6 @@ namespace Assets.Scripts
         }
         public void RefreshInventory()
         {
-            Debug.Log("InventoryUpdated!");
             foreach (Transform slotTransform in _slotsParent.transform)
             {
                 Destroy(slotTransform.gameObject);

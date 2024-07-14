@@ -94,6 +94,7 @@ namespace Assets.Scripts.Model
                                     else if (slot.Item is Armor armor)
                                     {
                                         player.EquippedArmors[armor.Type] = armor;
+                                        armor.IsEquipped = true;
                                     }
                                  }
                             }

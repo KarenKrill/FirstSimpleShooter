@@ -12,7 +12,7 @@ namespace Assets.Scripts.Model
 {
     [Serializable]
     [CreateAssetMenu(fileName = nameof(Player), menuName = nameof(Player))]
-    public class Player : ScriptableObject, ISerializationCallbackReceiver
+    public class Player : ScriptableObject
     {
         [field: SerializeField]
         public string Name { get; set; }
@@ -79,58 +79,31 @@ namespace Assets.Scripts.Model
 
         [field: SerializeField, Min(1)]
         public float BodyDamageMultiplier { get; set; } = 1;
-
-        [SerializeField]
-        private string _serializedInventory;
         [field: SerializeField]
         public Inventory InventoryConfig { get; set; }
-
-        [SerializeField]
-        private string _serializedEquippedWeapon;
-        public Weapon EquippedWeapon { get; set; }
-
-        [SerializeField]
-        private string _serializedEquippedArmors;
-        public Dictionary<ArmorType, Armor> EquippedArmors = new();
-
-        public void OnAfterDeserialize()
+        [field: SerializeField]
+        private Weapon _equippedWeapon;
+        public Weapon EquippedWeapon
         {
-            if (InventoryConfig != null && !string.IsNullOrEmpty(_serializedInventory))
+            get => _equippedWeapon;
+            set
             {
-                JsonUtility.FromJsonOverwrite(_serializedInventory, InventoryConfig);
-            }
-            if (EquippedWeapon != null && !string.IsNullOrEmpty(_serializedEquippedWeapon))
-            {
-                JsonUtility.FromJsonOverwrite(_serializedEquippedWeapon, EquippedWeapon);
-            }
-            if (EquippedArmors != null && !string.IsNullOrEmpty(_serializedEquippedArmors))
-            {
-                List<Armor> equippedArmorsList = new();
-                JsonUtility.FromJsonOverwrite(_serializedEquippedArmors, equippedArmorsList);
-                EquippedArmors.Clear();
-                foreach (var armor in equippedArmorsList)
+                if (_equippedWeapon != value)
                 {
-                    EquippedArmors[armor.Type] = armor;
+                    if (_equippedWeapon != null)
+                    {
+                        _equippedWeapon.IsEquipped = false;
+                    }
+                    if (value != null)
+                    {
+                        value.IsEquipped = true;
+                    }
+                    _equippedWeapon = value;
                 }
             }
         }
-        public void OnBeforeSerialize()
-        {
-            _serializedInventory = _serializedEquippedWeapon = _serializedEquippedArmors = string.Empty;
-            if (InventoryConfig != null)
-            {
-                _serializedInventory = JsonUtility.ToJson(InventoryConfig, true);
-            }
-            if (EquippedWeapon != null)
-            {
-                _serializedEquippedWeapon = JsonUtility.ToJson(EquippedWeapon, true);
-            }
-            if (EquippedArmors != null)
-            {
-                var equippedArmorsList = EquippedArmors.Values.ToList();
-                _serializedEquippedArmors = JsonUtility.ToJson(equippedArmorsList, true);
-            }
-        }
+        [field: SerializeField]
+        public Dictionary<ArmorType, Armor> EquippedArmors = new();
 
         private void OnValidate()
         {
@@ -140,18 +113,25 @@ namespace Assets.Scripts.Model
             }
             if (InventoryConfig != null)
             {
-                if (!InventoryConfig.ItemsSlots.Select(slot => slot.Item).Where(item => item != null && item is InventoryItems.Weapon).Contains(EquippedWeapon))
+                if (EquippedWeapon != null)
                 {
-                    EquippedWeapon = null;
+                    if (!InventoryConfig.ItemsSlots.Select(slot => slot.Item).Where(item => item != null && item is Weapon).Contains(EquippedWeapon))
+                    {
+                        EquippedWeapon.IsEquipped = false;
+                        EquippedWeapon = null;
+                    }
+                    else EquippedWeapon.IsEquipped = true;
                 }
-                var armors = InventoryConfig.ItemsSlots.Select(slot => slot.Item).Where(item => item != null && item is InventoryItems.Armor).ToList();
+                var armors = InventoryConfig.ItemsSlots.Select(slot => slot.Item).Where(item => item != null && item is Armor).ToList();
                 Dictionary<ArmorType, Armor> equippedArmors = new();
                 foreach (var armor in EquippedArmors.Values)
                 {
                     if (armors.Contains(armor))
                     {
                         equippedArmors[armor.Type] = armor;
+                        armor.IsEquipped = true;
                     }
+                    else armor.IsEquipped = false;
                 }
                 EquippedArmors = equippedArmors;
             }
@@ -187,6 +167,7 @@ namespace Assets.Scripts.Model
                                     {
                                         Debug.LogWarning($"{nameof(Player)}.{nameof(Clone)}: Can't replace {originalSlot.Item.name} on {cloneSlot.Item.name}");
                                     }
+                                    else cloneItemsMap[cloneSlot.ItemId] = cloneSlot.Item;
                                 }
                                 if (originalSlot.Item is Weapon weapon && weapon == EquippedWeapon)
                                 {
