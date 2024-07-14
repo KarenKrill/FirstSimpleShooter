@@ -145,8 +145,13 @@ namespace Assets.Scripts.Model
                 clone.InventoryConfig = Instantiate(InventoryConfig);
                 if(InventoryConfig.ItemsDatabase != null)
                 {
-                    clone.InventoryConfig.ItemsDatabase = Instantiate(InventoryConfig.ItemsDatabase);
-                    Dictionary<int, InventoryItem> cloneItemsMap = new();
+                    var cloneItemsDb = Instantiate(InventoryConfig.ItemsDatabase);
+                    clone.InventoryConfig.ItemsDatabase = cloneItemsDb;
+                    for (int i = 0; i < cloneItemsDb.Items.Count; i++)
+                    {
+                        var cloneItem = Instantiate(cloneItemsDb.Items[i]);
+                        cloneItemsDb.Items[i] = cloneItem;
+                    }
                     for (int i = 0; i < InventoryConfig.ItemsSlots.Count; i++)
                     {
                         var originalSlot = InventoryConfig.ItemsSlots[i];
@@ -155,19 +160,14 @@ namespace Assets.Scripts.Model
                             var cloneSlot = clone.InventoryConfig.ItemsSlots[i];
                             if (originalSlot.Item != null)
                             {
-                                if (cloneItemsMap.TryGetValue(cloneSlot.ItemId, out var alreadyClonedItem))
+                                if (cloneItemsDb.TryGetItem(cloneSlot.ItemId, out var clonedItem))
                                 {
                                     // Populate constant values ​​for all items of this type:
-                                    cloneSlot.Item.Icon = alreadyClonedItem.Icon;
+                                    cloneSlot.Item.Icon = clonedItem.Icon;
                                 }
                                 else
                                 {
-                                    cloneSlot.Item = Instantiate(originalSlot.Item);
-                                    if (!clone.InventoryConfig.ItemsDatabase.TryReplaceItem(originalSlot.Item, cloneSlot.Item))
-                                    {
-                                        Debug.LogWarning($"{nameof(Player)}.{nameof(Clone)}: Can't replace {originalSlot.Item.name} on {cloneSlot.Item.name}");
-                                    }
-                                    else cloneItemsMap[cloneSlot.ItemId] = cloneSlot.Item;
+                                    Debug.LogWarning($"{nameof(Player)}.{nameof(Clone)}: Can't find {originalSlot.Item.name} in {nameof(Player)} \"{Name}\" {nameof(InventoryConfig.ItemsDatabase)}");
                                 }
                                 if (originalSlot.Item is Weapon weapon && weapon == EquippedWeapon)
                                 {
