@@ -48,35 +48,47 @@ namespace Assets.Scripts.Model
                 }
             }
         }
-        public void AddItem(InventoryItems.InventoryItem item, int count)
+
+        public void AddItem(InventoryItems.InventoryItem item, int count, bool placeInNewSlot = false)
         {
-            if (item != null && count >= 0)
+            if (item != null && count >= 0 && ItemsDatabase.TryGetItemId(item, out int id))
             {
                 for (int i = 0; i < _itemsSlots.Count; i++)
                 {
-                    if (_itemsSlots[i].Item == item)
+                    var slot = _itemsSlots[i];
+                    if (placeInNewSlot)
                     {
-                        _itemsSlots[i].AddCount(count);
+                        if (slot.Item == null)
+                        {
+                            slot.ItemId = id;
+                            slot.Item = item;
+                            slot.StackCount = count;
+                            slot.StackCountChanged += OnSlotStackCountChanged;
+                            ItemAdded?.Invoke(item);
+                            return;
+                        }
+                    }
+                    else if (slot.Item == item)
+                    {
+                        slot.AddCount(count);
                         return;
                     }
                 }
-                if (ItemsDatabase.TryGetItemId(item, out int id))
-                {
-                    var itemSlot = new InventorySlot(id, item, count);
-                    itemSlot.StackCountChanged += OnSlotStackCountChanged;
-                    _itemsSlots.Add(itemSlot);
-                    ItemAdded?.Invoke(item);
-                }
+                var itemSlot = new InventorySlot(id, item, count);
+                itemSlot.StackCountChanged += OnSlotStackCountChanged;
+                _itemsSlots.Add(itemSlot);
+                ItemAdded?.Invoke(item);
             }
         }
-        public void RemoveItem(InventoryItems.InventoryItem item)
+        public void RemoveItem(InventorySlot itemSlot)
         {
+            var item = itemSlot.Item;
             if (item != null)
             {
                 for (int i = 0; i < _itemsSlots.Count; i++)
                 {
                     var slot = _itemsSlots[i];
-                    if (slot.Item == item)
+                    if (slot.Item == item && slot.StackCount == itemSlot.StackCount)
                     {
                         slot.Clear();
                         slot.StackCountChanged -= OnSlotStackCountChanged;

@@ -152,6 +152,7 @@ namespace Assets.Scripts.Model
                         var cloneItem = Instantiate(cloneItemsDb.Items[i]);
                         cloneItemsDb.Items[i] = cloneItem;
                     }
+                    cloneItemsDb.ItemsChanged();
                     for (int i = 0; i < InventoryConfig.ItemsSlots.Count; i++)
                     {
                         var originalSlot = InventoryConfig.ItemsSlots[i];
@@ -163,19 +164,28 @@ namespace Assets.Scripts.Model
                                 if (cloneItemsDb.TryGetItem(cloneSlot.ItemId, out var clonedItem))
                                 {
                                     // Populate constant values ​​for all items of this type:
+                                    cloneSlot.Item = clonedItem;
                                     cloneSlot.Item.Icon = clonedItem.Icon;
                                 }
                                 else
                                 {
                                     Debug.LogWarning($"{nameof(Player)}.{nameof(Clone)}: Can't find {originalSlot.Item.name} in {nameof(Player)} \"{Name}\" {nameof(InventoryConfig.ItemsDatabase)}");
                                 }
-                                if (originalSlot.Item is Weapon weapon && weapon == EquippedWeapon)
+                                if (originalSlot.Item is Weapon weapon)
                                 {
-                                    clone.EquippedWeapon = (Weapon)cloneSlot.Item;
+                                    if (weapon == EquippedWeapon)
+                                    {
+                                        clone.EquippedWeapon = (Weapon)cloneSlot.Item;
+                                    }
+                                    else cloneSlot.Item.IsEquipped = false;
                                 }
-                                else if (originalSlot.Item is Armor originalArmor && EquippedArmors.TryGetValue(originalArmor.Type, out var equippedArmor) && originalArmor == equippedArmor)
+                                else if (originalSlot.Item is Armor originalArmor)
                                 {
-                                    clone.EquippedArmors[originalArmor.Type] = (Armor)cloneSlot.Item;
+                                    if (EquippedArmors.TryGetValue(originalArmor.Type, out var equippedArmor) && originalArmor == equippedArmor)
+                                    {
+                                        clone.EquippedArmors[originalArmor.Type] = (Armor)cloneSlot.Item;
+                                    }
+                                    else cloneSlot.Item.IsEquipped = false;
                                 }
                             }
                         }

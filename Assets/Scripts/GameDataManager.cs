@@ -15,6 +15,7 @@ namespace Assets.Scripts
         private static Lazy<GameDataManager> _instance = new(() => new());
         public static GameDataManager Instance => _instance.Value;
         public GameData GameData => _gameData;
+        public GameData DefaultGameData => _defaultGameData;
         public void Init(GameData defaultGameData)
         {
             _defaultGameData = defaultGameData;

@@ -138,7 +138,7 @@ public class InventoryPropertiesManager : MonoBehaviour
                     _selectedItemSlot.RemoveCount(1);
                     if (_selectedItemSlot.StackCount == 0)
                     {
-                        InventoryPanel.RemItem(potion);
+                        InventoryPanel.RemItem(_selectedItemSlot);
                         _selectedItemSlot.Clear();
                     }
                     break;
@@ -153,7 +153,7 @@ public class InventoryPropertiesManager : MonoBehaviour
     }
     public void OnRemoveButtonClick()
     {
-        InventoryPanel.RemItem(_selectedItemSlot.Item);
+        InventoryPanel.RemItem(_selectedItemSlot);
         gameObject.SetActive(false);
     }
 }

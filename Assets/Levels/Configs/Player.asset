@@ -20,4 +20,4 @@ MonoBehaviour:
   <HeadDamageMultiplier>k__BackingField: 3
   <BodyDamageMultiplier>k__BackingField: 1
   <InventoryConfig>k__BackingField: {fileID: 11400000, guid: 5fbbdd47813200341af84b621de0193b, type: 2}
-  _equippedWeapon: {fileID: 0}
+  _equippedWeapon: {fileID: 11400000, guid: e07fafd6e3590b74e826890752771419, type: 2}

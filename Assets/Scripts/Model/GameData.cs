@@ -73,7 +73,7 @@ namespace Assets.Scripts.Model
                                 break;
                             }
                             var serializedPlayerInventoryItem = serializedInventoryItems[itemIndex++];
-                            if (slot.Item == null && player.InventoryConfig.ItemsDatabase != null)
+                            if (slot.Item == null && slot.ItemId != 0 && player.InventoryConfig.ItemsDatabase != null)
                             {
                                 if (!player.InventoryConfig.ItemsDatabase.TryGetItem(slot.ItemId, out slot.Item))
                                 {

@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Model.InventoryItems;
+﻿using Assets.Scripts.Model;
+using Assets.Scripts.Model.InventoryItems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -179,7 +180,6 @@ namespace Assets.Scripts
                     {
                         _startDragItemPos = inventorySlot.Item.transform.position;
                         _dragItemSlot = inventorySlot;
-                        Debug.Log($"PointerDown on {inventorySlot}");
                     }
                 }
             }
@@ -258,7 +258,6 @@ namespace Assets.Scripts
                             _dragItemSlot.Item = null;
                         }
                         _dragItemSlot = null;
-                        Debug.Log($"PointerUp on {destInventorySlot}");
                     }
                 }
                 if (_dragItemSlot != null)
@@ -306,8 +305,9 @@ namespace Assets.Scripts
                 }
             }
         }
-        public void RemItem(InventoryItem gameItem)
+        public void RemItem(InventorySlot gameItemSlot)
         {
+            var gameItem = gameItemSlot.Item;
             if (gameItem is Weapon weapon && GameDataManager.Instance.GameData.Player.EquippedWeapon == weapon)
             {
                 GameDataManager.Instance.GameData.Player.EquippedWeapon = null;
@@ -324,14 +324,14 @@ namespace Assets.Scripts
                     if (itemComponent != null)
                     {
                         var item = itemComponent.Item;
-                        if (item != null && item == gameItem)
+                        if (item != null && item == gameItem && itemComponent.Slot.StackCount == gameItemSlot.StackCount)
                         {
                             Destroy(itemTransform.gameObject);
                         }
                     }
                 }
             }
-            GameDataManager.Instance.GameData.Player.InventoryConfig.RemoveItem(gameItem);
+            GameDataManager.Instance.GameData.Player.InventoryConfig.RemoveItem(gameItemSlot);
         }
         public void ClearItems()
         {

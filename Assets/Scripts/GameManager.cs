@@ -139,9 +139,14 @@ public class GameManager : MonoBehaviour
                     {
                         System.Random random = new();
                         int rewardItemIndex = RewardItems.Count == 1 ? 0 : random.Next(0, RewardItems.Count - 1);
-                        var rewardItem = Instantiate(RewardItems[rewardItemIndex]);
-                        var rewardItemsCount = rewardItem is Ammo ? random.Next(1, 40) : 1;
-                        GameDataManager.Instance.GameData.Player.InventoryConfig.AddItem(rewardItem, rewardItemsCount);
+                        if (GameDataManager.Instance.DefaultGameData.Player.InventoryConfig.ItemsDatabase.TryGetItemId(RewardItems[rewardItemIndex], out var itemId))
+                        {
+                            if (GameDataManager.Instance.GameData.Player.InventoryConfig.ItemsDatabase.TryGetItem(itemId, out var rewardItem))
+                            {
+                                var rewardItemsCount = rewardItem is Ammo ? random.Next(1, 40) : 1;
+                                GameDataManager.Instance.GameData.Player.InventoryConfig.AddItem(rewardItem, rewardItemsCount, true);
+                            }
+                        }
                     }
                     if (++GameDataManager.Instance.GameData.RoundNumber >= GameDataManager.Instance.GameData.RoundsCount)
                     {
@@ -217,9 +222,12 @@ public class GameManager : MonoBehaviour
     }
     private void OnApplicationQuit()
     {
-        if (GameDataManager.Instance.GameData.State == GameState.PlayerTurn || GameDataManager.Instance.GameData.State == GameState.EnemyTurn)
+        if (GameDataManager.Instance != null && GameDataManager.Instance.GameData != null)
         {
-            GameDataManager.Instance.Save();
+            if (GameDataManager.Instance.GameData.State == GameState.PlayerTurn || GameDataManager.Instance.GameData.State == GameState.EnemyTurn)
+            {
+                GameDataManager.Instance.Save();
+            }
         }
     }
 }
