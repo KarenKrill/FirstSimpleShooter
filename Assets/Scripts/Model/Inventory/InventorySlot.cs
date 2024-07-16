@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Model.InventoryItems;
+using System;
 using UnityEngine;
 
 namespace Assets.Scripts.Model
@@ -71,6 +72,64 @@ namespace Assets.Scripts.Model
             StackCount = 0;
             ItemId = 0;
             Item = null;
+        }
+        private static void SwapSlots(InventorySlot srcSlot, InventorySlot destSlot)
+        {
+            var (srcItem, srcItemId, srcStackCount) = (srcSlot.Item, srcSlot.ItemId, srcSlot.StackCount);
+            (srcSlot.Item, srcSlot.ItemId, srcSlot.StackCount) = (destSlot.Item, destSlot.ItemId, destSlot.StackCount);
+            (destSlot.Item, destSlot.ItemId, destSlot.StackCount) = (srcItem, srcItemId, srcStackCount);
+        }
+        public void MoveTo(InventorySlot destSlot)
+        {
+            if (this == destSlot)
+            {
+                return;
+            }
+            if (destSlot.Item != null)
+            {
+                if (Item.Name == destSlot.Item.Name) // the same items
+                {
+                    if (destSlot.StackCount < destSlot.Item.MaxStackCount)
+                    {
+                        int availableDestItemsCount = destSlot.Item.MaxStackCount - destSlot.StackCount;
+                        if (StackCount > availableDestItemsCount)
+                        {
+                            destSlot.AddCount(availableDestItemsCount);
+                            RemoveCount(availableDestItemsCount);
+                        }
+                        else
+                        {
+                            destSlot.AddCount(StackCount);
+                            Clear();
+                        }
+                    }
+                    else SwapSlots(this, destSlot);
+                }
+                else
+                {
+                    if (Item is Ammo ammo && destSlot.Item is Weapon weapon &&
+                        ammo.WeaponName == weapon.Name && weapon.AmmoCount < weapon.MaxAmmoCount)
+                    {
+                        var missingAmmoCount = weapon.MaxAmmoCount - weapon.AmmoCount;
+                        if (StackCount > missingAmmoCount)
+                        {
+                            weapon.AmmoCount += missingAmmoCount;
+                            RemoveCount(missingAmmoCount);
+                        }
+                        else
+                        {
+                            weapon.AmmoCount += StackCount;
+                            Clear();
+                        }
+                    }
+                    else SwapSlots(this, destSlot);
+                }
+            }
+            else
+            {
+                (destSlot.Item, destSlot.ItemId, destSlot.StackCount) = (Item, ItemId, StackCount);
+                Clear();
+            }
         }
     }
 }

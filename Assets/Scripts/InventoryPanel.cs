@@ -72,6 +72,7 @@ namespace Assets.Scripts
                 slotRectTransform.localPosition = CalcSlotPosition(slotNumber++);
                 slotRectTransform.sizeDelta = new(_slotSideSize, _slotSideSize);
                 var slotComponent = newSlotObject.GetComponent<InventorySlotComponent>();
+                slotComponent.Init(slot);
                 if (slot.Item != null)
                 {
                     var newItemObject = Instantiate(_inventoryItemPrefab, _itemsParent.transform);
@@ -165,7 +166,7 @@ namespace Assets.Scripts
         private InventorySlotComponent _dragItemSlot;
         private Vector3 _startDragItemPos;
         [HideInInspector]
-        public Assets.Scripts.Model.InventorySlot SelectedGameItemSlot;
+        public InventorySlot SelectedGameItemSlot;
         public GameObject InventoryPropertiesParentPanel;
         public GameObject InventoryPropertiesPanel;
         public void OnPointerDown(PointerEventData eventData)
@@ -199,65 +200,15 @@ namespace Assets.Scripts
             {
                 if (_dragItemSlot != null)
                 {
-                    var clickedObj = eventData.pointerCurrentRaycast.gameObject;
-                    var destInventorySlot = clickedObj?.GetComponent<InventorySlotComponent>();
+                    var clickedObj = eventData.pointerCurrentRaycast .gameObject;
+                    if (clickedObj != null)
+                    {
+                        var destInventorySlot = clickedObj.GetComponent<InventorySlotComponent>();
                     if (destInventorySlot != null && _dragItemSlot != destInventorySlot)
                     {
-                        if (destInventorySlot.Item != null)
-                        {
-                            var destInventoryItemParent = destInventorySlot.Item;
-                            var destInventortyItemComponent = destInventoryItemParent.GetComponent<InventoryItemComponent>();
-                            var srcInventortyItemComponent = _dragItemSlot.Item.GetComponent<InventoryItemComponent>();
-                            var destGameSlot = destInventortyItemComponent.Slot;
-                            var sourceGameSlot = srcInventortyItemComponent.Slot;
-                            if (destGameSlot.Item.Name == sourceGameSlot.Item.Name && destGameSlot.StackCount < destGameSlot.Item.MaxStackCount)
-                            {
-                                int availableDestItemsCount = destGameSlot.Item.MaxStackCount - destGameSlot.StackCount;
-                                int moveItemsCount = sourceGameSlot.StackCount < availableDestItemsCount ? sourceGameSlot.StackCount : availableDestItemsCount;
-                                destGameSlot.AddCount(moveItemsCount);
-                                sourceGameSlot.RemoveCount(moveItemsCount);
-                                if (sourceGameSlot.StackCount == 0)
-                                {
-                                    sourceGameSlot.Clear();
-                                    Destroy(_dragItemSlot.Item);
-                                }
-                                else
-                                {
-                                    _dragItemSlot.PutItem(_dragItemSlot.Item);
-                                }
-                            }
-                            else
-                            {
-                                if (destGameSlot.Item is Assets.Scripts.Model.InventoryItems.Weapon weapon && sourceGameSlot.Item is Assets.Scripts.Model.InventoryItems.Ammo ammo && ammo.WeaponName == weapon.Name && weapon.AmmoCount < weapon.MaxAmmoCount)
-                                {
-                                    var missingAmmoCount = weapon.MaxAmmoCount - weapon.AmmoCount;
-                                    int ammoCount = sourceGameSlot.StackCount > missingAmmoCount ? missingAmmoCount : sourceGameSlot.StackCount;
-                                    weapon.AmmoCount += ammoCount;
-                                    if (ammoCount < sourceGameSlot.StackCount)
-                                    {
-                                        sourceGameSlot.RemoveCount(ammoCount);
-                                        _dragItemSlot.PutItem(_dragItemSlot.Item);
-                                    }
-                                    else
-                                    {
-                                        sourceGameSlot.Clear();
-                                        Destroy(_dragItemSlot.Item);
-                                    }
-                                }
-                                else
-                                {
-                                    // swap:
-                                    destInventorySlot.PutItem(_dragItemSlot.Item);
-                                    _dragItemSlot.PutItem(destInventoryItemParent);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            destInventorySlot.PutItem(_dragItemSlot.Item);
-                            _dragItemSlot.Item = null;
-                        }
+                            _dragItemSlot.Slot.MoveTo(destInventorySlot.Slot);
                         _dragItemSlot = null;
+                            RefreshInventory();
                     }
                 }
                 if (_dragItemSlot != null)
@@ -265,6 +216,7 @@ namespace Assets.Scripts
                     _dragItemSlot.Item.transform.position = _startDragItemPos;
                     _dragItemSlot = null;
                 }
+            }
             }
             else if (eventData.button == PointerEventData.InputButton.Right)
             {
@@ -286,13 +238,14 @@ namespace Assets.Scripts
             }
         }
 
-        public void AddItem(InventoryItem gameItem, Model.InventorySlot gameSlot)
+        public void AddItem(InventoryItem gameItem, InventorySlot gameSlot)
         {
             foreach (Transform childTransform in _slotsParent.transform)
             {
                 var slot = childTransform.gameObject.GetComponent<InventorySlotComponent>();
                 if (slot != null && slot.Item == null)
                 {
+                    slot.Init(gameSlot);
                     var inventoryItem = Instantiate(_inventoryItemPrefab, _itemsParent.transform);
                     var ii = inventoryItem.GetComponent<InventoryItemComponent>();
                     if (ii != null)
