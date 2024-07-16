@@ -81,7 +81,6 @@
     <Compile Include="Assets\Scripts\InventoryPanel.cs" />
     <Compile Include="Assets\Packages\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
     <Compile Include="Assets\Scripts\Model\GameData.cs" />
-    <Compile Include="Assets\Scripts\InventManager.cs" />
     <Compile Include="Assets\Scripts\Model\Player.cs" />
     <Compile Include="Assets\Packages\TextMesh Pro\Examples &amp; Extras\Scripts\ObjectSpin.cs" />
     <Compile Include="Assets\Packages\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
