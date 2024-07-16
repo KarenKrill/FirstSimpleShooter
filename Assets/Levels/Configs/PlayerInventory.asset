@@ -62,18 +62,18 @@ MonoBehaviour:
   - ItemId: 0
     Item: {fileID: 0}
     _stackCount: 0
-  - ItemId: 10
-    Item: {fileID: 11400000, guid: 87bed3c7890a6644192524529ecaa37b, type: 2}
-    _stackCount: 1
   - ItemId: 0
     Item: {fileID: 0}
     _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
     _stackCount: 0
-  - ItemId: 5
-    Item: {fileID: 11400000, guid: 992d04fc9dc8aa2468f25e1f05f5af53, type: 2}
-    _stackCount: 66
+  - ItemId: 0
+    Item: {fileID: 0}
+    _stackCount: 0
+  - ItemId: 0
+    Item: {fileID: 0}
+    _stackCount: 0
   - ItemId: 0
     Item: {fileID: 0}
     _stackCount: 0

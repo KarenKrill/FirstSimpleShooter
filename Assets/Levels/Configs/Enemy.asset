@@ -13,18 +13,11 @@ MonoBehaviour:
   m_Name: Enemy
   m_EditorClassIdentifier: 
   <Name>k__BackingField: Enemy
-  <Health>k__BackingField: 100
-  <MaxHealth>k__BackingField: 100
+  _health: 100
+  _maxHealth: 100
   <HeadDefence>k__BackingField: 0
   <BodyDefence>k__BackingField: 0
   <HeadDamageMultiplier>k__BackingField: 3
   <BodyDamageMultiplier>k__BackingField: 1
-  _serializedInventory: "{\n    \"<ItemsDatabase>k__BackingField\": {\n        \"instanceID\":
-    23074\n    },\n    \"<ItemsSlots>k__BackingField\": [\n        {\n           
-    \"ItemId\": 3,\n            \"Item\": {\n                \"instanceID\": 23056\n           
-    },\n            \"StackCount\": 1\n        }\n    ]\n}"
   <InventoryConfig>k__BackingField: {fileID: 11400000, guid: 26e24a587c0601c44926f63308f70b8b, type: 2}
-  _serializedEquippedWeapon: 
-  <EquippedWeapon>k__BackingField: {fileID: 0}
-  _serializedEquippedArmors: '{}'
-  <EquippedArmors>k__BackingField: []
+  _equippedWeapon: {fileID: 11400000, guid: 845e6653efe011e4e93db94ed397eb5f, type: 2}
