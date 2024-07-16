@@ -8,8 +8,10 @@ public class InventoryItemComponent : MonoBehaviour
 {
     private InventoryItem _item;
     private InventorySlot _slot;
-    private bool _isEmptyWeaponColor = false;
-    private Color _textColor = Color.black;
+    private Color _defaultTextColor = Color.black;
+    private Color _fullStackTextColor = Color.black;
+    private Color _emptyWeaponMagTextColor = Color.black;
+    private Color _fullWeaponMagTextColor = Color.black;
 
     [SerializeField]
     private Image _icon;
@@ -20,24 +22,12 @@ public class InventoryItemComponent : MonoBehaviour
 
     public InventoryItem Item => _item;
     public InventorySlot Slot => _slot;
-    public Color TextColor
-    {
-        get => _textColor;
-        set
-        {
-            _textColor = value;
-            if (_countText != null && !_isEmptyWeaponColor)
-            {
-                _countText.color = value;
-            }
-        }
-    }
 
     private void UpdateStackCountText(int stackCount)
     {
         if (_countText != null)
         {
-            _countText.color = _textColor;
+            _countText.color = (stackCount < _item.MaxStackCount) ? _defaultTextColor : _fullStackTextColor;
             _countText.enabled = stackCount > 1;
             _countText.text = stackCount.ToString();
         }
@@ -47,16 +37,7 @@ public class InventoryItemComponent : MonoBehaviour
         if (_countText != null)
         {
             _countText.enabled = true;
-            if (ammoCount == 0)
-            {
-                _countText.color = Color.red;
-                _isEmptyWeaponColor = true;
-            }
-            else
-            {
-                _countText.color = _textColor;
-                _isEmptyWeaponColor = false;
-            }
+            _countText.color = (ammoCount == 0) ? _emptyWeaponMagTextColor : (ammoCount == maxAmmoCount) ? _fullWeaponMagTextColor : _defaultTextColor;
             _countText.text = $"{ammoCount}/{maxAmmoCount}";
         }
     }
@@ -107,10 +88,14 @@ public class InventoryItemComponent : MonoBehaviour
     private void OnEnable() => SubscribeOnEvents();
     private void OnDisable() => UnsubscribeFromEvents();
 
-    public void Init(InventoryItem item, InventorySlot slot)
+    public void Init(InventoryItem item, InventorySlot slot, Color defaultTextColor, Color fullStackTextColor, Color emptyWeaponMagTextColor, Color fullWeaponMagTextColor)
     {
         _item = item;
         _slot = slot;
+        _defaultTextColor = defaultTextColor;
+        _fullStackTextColor = fullStackTextColor;
+        _emptyWeaponMagTextColor = emptyWeaponMagTextColor;
+        _fullWeaponMagTextColor = fullWeaponMagTextColor;
         bool isWeapon = false;
         if (_item != null)
         {

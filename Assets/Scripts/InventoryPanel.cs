@@ -75,7 +75,7 @@ namespace Assets.Scripts
                     itemRectTransform.localPosition = slotRectTransform.localPosition;
                     itemRectTransform.sizeDelta = slotRectTransform.sizeDelta;
                     var itemComponent = slotComponent.Item.GetComponent<InventoryItemComponent>();
-                    itemComponent.Init(slot.Item, slot);
+                    itemComponent.Init(slot.Item, slot, Color.black, Color.green, Color.red, Color.green);
                 }
             }
         }
@@ -194,19 +194,19 @@ namespace Assets.Scripts
                     if (clickedObj != null)
                     {
                         var destInventorySlot = clickedObj.GetComponent<InventorySlotComponent>();
-                    if (destInventorySlot != null && _dragItemSlot != destInventorySlot)
-                    {
+                        if (destInventorySlot != null && _dragItemSlot != destInventorySlot)
+                        {
                             _dragItemSlot.Slot.MoveTo(destInventorySlot.Slot);
-                        _dragItemSlot = null;
+                            _dragItemSlot = null;
                             RefreshInventory();
+                        }
+                    }
+                    if (_dragItemSlot != null)
+                    {
+                        _dragItemSlot.Item.transform.position = _startDragItemPos;
+                        _dragItemSlot = null;
                     }
                 }
-                if (_dragItemSlot != null)
-                {
-                    _dragItemSlot.Item.transform.position = _startDragItemPos;
-                    _dragItemSlot = null;
-                }
-            }
             }
             else if (eventData.button == PointerEventData.InputButton.Right)
             {
@@ -240,8 +240,7 @@ namespace Assets.Scripts
                     var ii = inventoryItem.GetComponent<InventoryItemComponent>();
                     if (ii != null)
                     {
-                        ii.Init(gameItem, gameSlot);
-                        ii.TextColor = Color.black;
+                        ii.Init(gameItem, gameSlot, Color.black, Color.green, Color.red, Color.green);
                         slot.PutItem(inventoryItem);
                     }
                     break;
