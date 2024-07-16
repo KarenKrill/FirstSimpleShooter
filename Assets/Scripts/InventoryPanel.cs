@@ -2,13 +2,8 @@
 using Assets.Scripts.Model.InventoryItems;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
@@ -17,7 +12,6 @@ namespace Assets.Scripts
     {
         [SerializeField]
         private Camera _renderingCamera;
-        public TextMeshProUGUI MousePosText;
         [SerializeField]
         private GameObject _inventorySlotPrefab;
         [SerializeField]
@@ -155,10 +149,6 @@ namespace Assets.Scripts
             {
                 var pos = _renderingCamera.ScreenToWorldPoint(Input.mousePosition);
                 _dragItemSlot.Item.transform.position = new Vector3(pos.x, pos.y, _dragItemSlot.Item.transform.position.z);
-                if (MousePosText != null)
-                {
-                    MousePosText.text = $"x:{pos.x}, y:{pos.y}";
-                }
             }
         }
 
