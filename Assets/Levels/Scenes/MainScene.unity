@@ -3778,7 +3778,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerDefaultConfig: {fileID: 11400000, guid: 7d036c302ec859543a9c305f11cfaca4, type: 2}
   _enemyDefaultConfig: {fileID: 11400000, guid: 5576c6724581d894b9c1c764d96a8aee, type: 2}
-  _roundsCount: 2
+  _roundsCount: 3
 --- !u!224 &631649481 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 794240933952724348, guid: ec8b1353c761a214ead1e7783e8cf194, type: 3}
