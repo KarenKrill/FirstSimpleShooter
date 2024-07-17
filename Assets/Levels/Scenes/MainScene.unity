@@ -250,7 +250,14 @@ MonoBehaviour:
   PlayerLifeSliderParent: {fileID: 211781457}
   EnemyLifeSliderParent: {fileID: 849057637}
   ContinueMenuButton: {fileID: 179881805}
+  FireButton: {fileID: 2012914678}
   InventoryPanel: {fileID: 1201522315}
+  _playerAnimator: {fileID: 337408747}
+  _enemyAnimator: {fileID: 1521455592}
+  PlayerAttackAnimationDelay: 1
+  EnemyAttackAnimationDelay: 2
+  EnemyDeathAnimationDelay: 5
+  PlayerDeathAnimationDelay: 5
 --- !u!1 &10611627
 GameObject:
   m_ObjectHideFlags: 0

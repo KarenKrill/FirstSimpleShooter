@@ -83,6 +83,7 @@ namespace Assets.Scripts.Model
         public Inventory InventoryConfig { get; set; }
         [field: SerializeField]
         private Weapon _equippedWeapon;
+        public Action<Player> EquippedWeaponChanged;
         public Weapon EquippedWeapon
         {
             get => _equippedWeapon;
@@ -99,6 +100,7 @@ namespace Assets.Scripts.Model
                         value.IsEquipped = true;
                     }
                     _equippedWeapon = value;
+                    EquippedWeaponChanged?.Invoke(this);
                 }
             }
         }

@@ -1,11 +1,10 @@
+using Assets.Scripts;
+using Assets.Scripts.Model;
+using Assets.Scripts.Model.InventoryItems;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using Assets.Scripts;
-using Assets.Scripts.Model.InventoryItems;
-using Assets.Scripts.Model;
 
 [Serializable]
 public enum GameState
@@ -13,7 +12,10 @@ public enum GameState
     None,
     Menu,
     PlayerTurn,
+    PlayerAttack,
     EnemyTurn,
+    EnemyAttack,
+    RoundWin,
     Win,
     Defeat
 }
@@ -25,23 +27,57 @@ public enum PlayerChangeType
     Defence,
     Weapon
 }
+[Serializable]
 public class GameManager : MonoBehaviour
 {
     public Weapon EnemyWeapon;
-    public List<Assets.Scripts.Model.InventoryItems.InventoryItem> RewardItems;
+    public List<InventoryItem> RewardItems;
     public GameObject PlayerLifeSliderParent;
     public GameObject EnemyLifeSliderParent;
     public Button ContinueMenuButton;
+    public Button FireButton;
     public InventoryPanel InventoryPanel;
+    [SerializeField]
+    private Animator _playerAnimator, _enemyAnimator;
     private void OnGameStateChanged(GameState gameState)
     {
         if (gameState != GameState.Menu && ContinueMenuButton != null)
         {
             ContinueMenuButton.interactable = !(gameState == GameState.Win || gameState == GameState.Defeat);
+            FireButton.interactable = (gameState == GameState.PlayerTurn);
+        }
+        else
+        {
+            string playerEquippedWeaponVarName = "IsPistolEquipped";
+            if (GameDataManager.Instance.GameData.Player.EquippedWeapon != null && GameDataManager.Instance.GameData.Player.EquippedWeapon.Name == "AssaultRifle")
+            {
+                _playerAnimator.SetBool(playerEquippedWeaponVarName, false);
+            }
+            else
+            {
+                _playerAnimator.SetBool(playerEquippedWeaponVarName, true);
+            }
+            switch (gameState)
+            {
+                case GameState.PlayerTurn:
+                    _playerAnimator.SetTrigger("Idle");
+                    break;
+                case GameState.PlayerAttack:
+                    _playerAnimator.SetTrigger("Attack");
+                    break;
+                case GameState.EnemyTurn:
+                    _enemyAnimator.SetTrigger("Idle");
+                    break;
+                case GameState.EnemyAttack:
+                    _enemyAnimator.SetTrigger("Attack");
+                    break;
+                default:
+                    break;
+            }
         }
         GameStateChanged?.Invoke(gameState);
     }
-    private void OnPlayerHealthChanged(Assets.Scripts.Model.Player player, Slider playerLifeSlider)
+    private void OnPlayerHealthChanged(Player player, Slider playerLifeSlider)
     {
         if (playerLifeSlider != null)
         {
@@ -57,7 +93,22 @@ public class GameManager : MonoBehaviour
     {
         InventoryPanel.Inventory = inventory;
     }
-    
+    private void OnEquippedWeaponChanged(Player player)
+    {
+        if (player != null)
+        {
+            if (player.EquippedWeapon != null)
+            {
+                if (_playerAnimator.isInitialized)
+                {
+                    _playerAnimator.SetBool("IsPistolEquipped", player.EquippedWeapon.Name == "Pistol");
+                    _playerAnimator.SetTrigger("WeaponChanged");
+                }
+                Debug.Log($"Weapon changed on {player.EquippedWeapon.Name}");
+            }
+        }
+    }
+
     public event Action<GameState> GameStateChanged;
     public static GameManager Instance;
 
@@ -65,6 +116,7 @@ public class GameManager : MonoBehaviour
     {
         GameDataManager.Instance.ResetToDefaults();
         GameDataManager.Instance.GameData.GameStateChanged += OnGameStateChanged;
+        GameDataManager.Instance.GameData.Player.EquippedWeaponChanged += OnEquippedWeaponChanged;
         if (PlayerLifeSliderParent != null)
         {
             OnPlayerHealthChanged(GameDataManager.Instance.GameData.Player, PlayerLifeSliderParent.GetComponent<Slider>());
@@ -75,6 +127,8 @@ public class GameManager : MonoBehaviour
         }
         OnInventoryChanged(GameDataManager.Instance.GameData.Player.InventoryConfig);
         GameDataManager.Instance.GameData.State = GameState.PlayerTurn;
+        _playerAnimator.SetBool("IsPistolEquipped", GameDataManager.Instance.GameData.Player.EquippedWeapon.Name == "Pistol");
+        _playerAnimator.SetTrigger("WeaponChanged");
     }
     public void ContinueGame()
     {
@@ -89,6 +143,8 @@ public class GameManager : MonoBehaviour
         }
         OnInventoryChanged(GameDataManager.Instance.GameData.Player.InventoryConfig);
         OnGameStateChanged(GameDataManager.Instance.GameData.State);
+        _playerAnimator.SetBool("IsPistolEquipped", GameDataManager.Instance.GameData.Player.EquippedWeapon.Name == "Pistol");
+        _playerAnimator.SetTrigger("WeaponChanged");
     }
     public void ExitToMenu()
     {
@@ -106,11 +162,13 @@ public class GameManager : MonoBehaviour
         Application.Quit();
 #endif
     }
-    
+
     private ArmorType _playerLastAim, _enemyLastAim;
     private System.Random _random = new();
     public void Attack()
     {
+        FireButton.interactable = false;
+        _playerAnimator.SetTrigger("Attack");
         var weapon = GameDataManager.Instance.GameData.Player.EquippedWeapon;
         if (weapon != null)
         {
@@ -124,50 +182,14 @@ public class GameManager : MonoBehaviour
                 damage *= ((100f - 5 * (_playerLastAim == ArmorType.Headgear ? GameDataManager.Instance.GameData.Enemy.HeadDefence : GameDataManager.Instance.GameData.Enemy.BodyDefence)) / 100f); // armor attack reduction
                 weapon.AmmoCount -= ammoCountPerShoot;
                 GameDataManager.Instance.GameData.Enemy.Damage(damage);
-                if (EnemyLifeSliderParent != null)
-                {
-                    OnPlayerHealthChanged(GameDataManager.Instance.GameData.Enemy, EnemyLifeSliderParent.GetComponent<Slider>());
-                }
-                if (GameDataManager.Instance.GameData.Enemy.IsAlive)
-                {
-                    GameDataManager.Instance.GameData.State = GameState.EnemyTurn;
-                    EnemyAttack();
-                }
-                else
-                {
-                    if (RewardItems != null && RewardItems.Count > 0)
-                    {
-                        System.Random random = new();
-                        int rewardItemIndex = RewardItems.Count == 1 ? 0 : random.Next(0, RewardItems.Count - 1);
-                        if (GameDataManager.Instance.DefaultGameData.Player.InventoryConfig.ItemsDatabase.TryGetItemId(RewardItems[rewardItemIndex], out var itemId))
-                        {
-                            if (GameDataManager.Instance.GameData.Player.InventoryConfig.ItemsDatabase.TryGetItem(itemId, out var rewardItem))
-                            {
-                                var rewardItemsCount = rewardItem is Ammo ? random.Next(1, 40) : 1;
-                                GameDataManager.Instance.GameData.Player.InventoryConfig.AddItem(rewardItem, rewardItemsCount, true);
-                            }
-                        }
-                    }
-                    if (++GameDataManager.Instance.GameData.RoundNumber >= GameDataManager.Instance.GameData.RoundsCount)
-                    {
-                        GameDataManager.Instance.GameData.State = GameState.Win;
-                    }
-                    else
-                    {
-                        GameDataManager.Instance.GameData.Enemy.Health = GameDataManager.Instance.GameData.Enemy.MaxHealth;
-                        Debug.Log($"Round {GameDataManager.Instance.GameData.RoundNumber + 1}/{GameDataManager.Instance.GameData.RoundsCount + 1}!");
-                    }
-                    if (EnemyLifeSliderParent != null)
-                    {
-                        OnPlayerHealthChanged(GameDataManager.Instance.GameData.Enemy, EnemyLifeSliderParent.GetComponent<Slider>());
-                    }
-                }
+                GameDataManager.Instance.GameData.State = GameState.PlayerAttack;
             }
         }
         else Debug.Log("Weapon isn't equipped!");
     }
     public void EnemyAttack()
     {
+        _enemyAnimator.SetTrigger("Attack");
         if (GameDataManager.Instance.GameData.Player.EquippedArmors != null)
         {
             if (GameDataManager.Instance.GameData.Player.EquippedArmors.TryGetValue(ArmorType.Headgear, out var headgear) && headgear != null)
@@ -188,15 +210,6 @@ public class GameManager : MonoBehaviour
         damage *= _enemyLastAim == ArmorType.Headgear ? GameDataManager.Instance.GameData.Player.HeadDamageMultiplier : GameDataManager.Instance.GameData.Player.BodyDamageMultiplier;
         damage *= ((100f - 5 * (_enemyLastAim == ArmorType.Headgear ? GameDataManager.Instance.GameData.Player.HeadDefence : GameDataManager.Instance.GameData.Player.BodyDefence)) / 100f); // armor attack reduction
         GameDataManager.Instance.GameData.Player.Damage(damage);
-        if (PlayerLifeSliderParent != null)
-        {
-            OnPlayerHealthChanged(GameDataManager.Instance.GameData.Player, PlayerLifeSliderParent.GetComponent<Slider>());
-        }
-        if (GameDataManager.Instance.GameData.Player.IsDead)
-        {
-            GameDataManager.Instance.GameData.State = GameState.Defeat;
-        }
-        else GameDataManager.Instance.GameData.State = GameState.PlayerTurn;
     }
     public void Heal(float hp)
     {
@@ -214,6 +227,11 @@ public class GameManager : MonoBehaviour
     public void Init()
     {
         GameDataManager.Instance.GameData.GameStateChanged += OnGameStateChanged;
+        GameDataManager.Instance.GameData.Player.EquippedWeaponChanged += OnEquippedWeaponChanged;
+        if (GameDataManager.Instance.GameData.Player != null)
+        {
+            OnEquippedWeaponChanged(GameDataManager.Instance.GameData.Player);
+        }
         if (ContinueMenuButton != null)
         {
             ContinueMenuButton.interactable = GameDataManager.Instance.IsSavedDataExists;
@@ -227,6 +245,111 @@ public class GameManager : MonoBehaviour
             if (GameDataManager.Instance.GameData.State == GameState.PlayerTurn || GameDataManager.Instance.GameData.State == GameState.EnemyTurn)
             {
                 GameDataManager.Instance.Save();
+            }
+        }
+    }
+    public float PlayerAttackAnimationDelay = 1;
+    float _playerAttackAnimationTime = 0;
+    public float EnemyAttackAnimationDelay = 1;
+    float _enemyAttackAnimationTime = 0;
+    public float EnemyDeathAnimationDelay = 1;
+    float _enemyDeathAnimationTime = 0;
+    public float PlayerDeathAnimationDelay = 1;
+    float _playerDeathAnimationTime = 0;
+
+    private void Update()
+    {
+        if (GameDataManager.Instance.GameData.State == GameState.PlayerAttack)
+        {
+            _playerAttackAnimationTime += Time.deltaTime;
+            if (_playerAttackAnimationTime >= PlayerAttackAnimationDelay)
+            {
+                _playerAttackAnimationTime = 0;
+                if (EnemyLifeSliderParent != null)
+                {
+                    OnPlayerHealthChanged(GameDataManager.Instance.GameData.Enemy, EnemyLifeSliderParent.GetComponent<Slider>());
+                }
+                GameDataManager.Instance.GameData.State = GameState.EnemyTurn;
+                if (GameDataManager.Instance.GameData.Enemy.IsDead)
+                {
+                    _enemyAnimator.SetTrigger("TakeFatalDamage");
+                }
+            }
+        }
+        else if (GameDataManager.Instance.GameData.State == GameState.EnemyTurn)
+        {
+            if (GameDataManager.Instance.GameData.Enemy.IsAlive)
+            {
+                EnemyAttack();
+                GameDataManager.Instance.GameData.State = GameState.EnemyAttack;
+            }
+            else
+            {
+                // Wait while plays enemy death animation
+                _enemyDeathAnimationTime += Time.deltaTime;
+                if (_enemyDeathAnimationTime >= EnemyDeathAnimationDelay)
+                {
+                    _enemyDeathAnimationTime = 0;
+                    if (RewardItems != null && RewardItems.Count > 0)
+                    {
+                        System.Random random = new();
+                        int rewardItemIndex = RewardItems.Count == 1 ? 0 : random.Next(0, RewardItems.Count - 1);
+                        if (GameDataManager.Instance.DefaultGameData.Player.InventoryConfig.ItemsDatabase.TryGetItemId(RewardItems[rewardItemIndex], out var itemId))
+                        {
+                            if (GameDataManager.Instance.GameData.Player.InventoryConfig.ItemsDatabase.TryGetItem(itemId, out var rewardItem))
+                            {
+                                var rewardItemsCount = rewardItem is Ammo ? random.Next(1, 40) : 1;
+                                GameDataManager.Instance.GameData.Player.InventoryConfig.AddItem(rewardItem, rewardItemsCount, true);
+                            }
+                        }
+                    }
+                    if (++GameDataManager.Instance.GameData.RoundNumber >= GameDataManager.Instance.GameData.RoundsCount)
+                    {
+                        GameDataManager.Instance.GameData.State = GameState.Win;
+                    }
+                    else
+                    {
+                        GameDataManager.Instance.GameData.Enemy.Health = GameDataManager.Instance.GameData.Enemy.MaxHealth;
+                        _enemyAnimator.SetTrigger("Resurrect");
+                        GameDataManager.Instance.GameData.State = GameState.PlayerTurn;
+                        Debug.Log($"Round {GameDataManager.Instance.GameData.RoundNumber + 1}/{GameDataManager.Instance.GameData.RoundsCount + 1}!");
+                    }
+                    if (EnemyLifeSliderParent != null)
+                    {
+                        OnPlayerHealthChanged(GameDataManager.Instance.GameData.Enemy, EnemyLifeSliderParent.GetComponent<Slider>());
+                    }
+                }
+            }
+        }
+        else if (GameDataManager.Instance.GameData.State == GameState.EnemyAttack)
+        {
+            _enemyAttackAnimationTime += Time.deltaTime;
+            if (_enemyAttackAnimationTime >= EnemyAttackAnimationDelay)
+            {
+                _enemyAttackAnimationTime = 0;
+                if (PlayerLifeSliderParent != null)
+                {
+                    OnPlayerHealthChanged(GameDataManager.Instance.GameData.Player, PlayerLifeSliderParent.GetComponent<Slider>());
+                }
+                GameDataManager.Instance.GameData.State = GameState.PlayerTurn;
+                if (GameDataManager.Instance.GameData.Player.IsDead)
+                {
+                    _playerAnimator.SetTrigger("TakeFatalDamage");
+                }
+            }
+        }
+        else if (GameDataManager.Instance.GameData.State == GameState.PlayerTurn)
+        {
+            if (GameDataManager.Instance.GameData.Player.IsDead)
+            {
+                // Wait while plays player death animation
+                _playerDeathAnimationTime += Time.deltaTime;
+                if (_playerDeathAnimationTime >= PlayerDeathAnimationDelay)
+                {
+                    _playerDeathAnimationTime = 0;
+                    _playerAnimator.SetTrigger("Resurrect");
+                    GameDataManager.Instance.GameData.State = GameState.Defeat;
+                }
             }
         }
     }

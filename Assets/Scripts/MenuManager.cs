@@ -25,51 +25,41 @@ public class MenuManager : MonoBehaviour
     }
     private void OnGameStateChanged(GameState state)
     {
-        if (MainMenu.Enabled)
+        static void SwitchMenu(List<Optional<GameObject>> turnOffMenus, GameObject turnOnMenu)
         {
-            MainMenu.Value.SetActive(false);
-        }
-        if (WinMenu.Enabled)
-        {
-            WinMenu.Value.SetActive(false);
-        }
-        if(DefeatMenu.Enabled)
-        {
-            DefeatMenu.Value.SetActive(false);
-        }
-        if(ConsumableMenu.Enabled)
-        {
-            ConsumableMenu.Value.SetActive(false);
-        }
-        if(InGameCanvas.Enabled)
-        {
-            InGameCanvas.Value.SetActive(false);
+            foreach (var menu in turnOffMenus)
+            {
+                if (menu.Enabled)
+                {
+                    menu.Value.SetActive(false);
+                }
+            }
+            turnOnMenu.SetActive(true);
         }
         switch (state)
         {
             case GameState.Menu:
-                if (MainMenu.Enabled)
+                if (MainMenu.Enabled && !MainMenu.Value.activeInHierarchy)
                 {
-                    MainMenu.Value.SetActive(true);
-                }
-                break;
-            case GameState.PlayerTurn:
-            case GameState.EnemyTurn:
-                if (InGameCanvas.Enabled)
-                {
-                    InGameCanvas.Value.SetActive(true);
+                    SwitchMenu(new() { WinMenu, DefeatMenu, ConsumableMenu, InGameCanvas }, MainMenu.Value);
                 }
                 break;
             case GameState.Win:
-                if (WinMenu.Enabled)
+                if (WinMenu.Enabled && !WinMenu.Value.activeInHierarchy)
                 {
-                    WinMenu.Value.SetActive(true);
+                    SwitchMenu(new() { DefeatMenu, ConsumableMenu, InGameCanvas, MainMenu }, WinMenu.Value);
                 }
                 break;
             case GameState.Defeat:
-                if (DefeatMenu.Enabled)
+                if (DefeatMenu.Enabled && !DefeatMenu.Value.activeInHierarchy)
                 {
-                    DefeatMenu.Value.SetActive(true);
+                    SwitchMenu(new() { WinMenu, ConsumableMenu, InGameCanvas, MainMenu }, DefeatMenu.Value);
+                }
+                break;
+            default:
+                if (InGameCanvas.Enabled && !InGameCanvas.Value.activeInHierarchy)
+                {
+                    SwitchMenu(new() { WinMenu, DefeatMenu, ConsumableMenu, MainMenu }, InGameCanvas.Value);
                 }
                 break;
         }
