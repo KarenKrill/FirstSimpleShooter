@@ -3,6 +3,7 @@ using Assets.Scripts.Model;
 using Assets.Scripts.Model.InventoryItems;
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,6 +38,7 @@ public class GameManager : MonoBehaviour
     public Button ContinueMenuButton;
     public Button FireButton;
     public InventoryPanel InventoryPanel;
+    public TextMeshProUGUI RoundText;
     [SerializeField]
     private Animator _playerAnimator, _enemyAnimator;
     private void OnGameStateChanged(GameState gameState)
@@ -115,6 +117,7 @@ public class GameManager : MonoBehaviour
     public void StartNewGame()
     {
         GameDataManager.Instance.ResetToDefaults();
+        RoundText.text = $"Round {GameDataManager.Instance.GameData.RoundNumber + 1}/{GameDataManager.Instance.GameData.RoundsCount}!";
         GameDataManager.Instance.GameData.GameStateChanged += OnGameStateChanged;
         GameDataManager.Instance.GameData.Player.EquippedWeaponChanged += OnEquippedWeaponChanged;
         if (PlayerLifeSliderParent != null)
@@ -133,6 +136,7 @@ public class GameManager : MonoBehaviour
     public void ContinueGame()
     {
         GameDataManager.Instance.Load();
+        RoundText.text = $"Round {GameDataManager.Instance.GameData.RoundNumber + 1}/{GameDataManager.Instance.GameData.RoundsCount}!";
         if (PlayerLifeSliderParent != null)
         {
             OnPlayerHealthChanged(GameDataManager.Instance.GameData.Player, PlayerLifeSliderParent.GetComponent<Slider>());
@@ -253,6 +257,7 @@ public class GameManager : MonoBehaviour
     public float EnemyAttackAnimationDelay = 1;
     float _enemyAttackAnimationTime = 0;
     public float EnemyDeathAnimationDelay = 1;
+    public float EnemyLastDeathAnimationDelay = 1;
     float _enemyDeathAnimationTime = 0;
     public float PlayerDeathAnimationDelay = 1;
     float _playerDeathAnimationTime = 0;
@@ -287,7 +292,8 @@ public class GameManager : MonoBehaviour
             {
                 // Wait while plays enemy death animation
                 _enemyDeathAnimationTime += Time.deltaTime;
-                if (_enemyDeathAnimationTime >= EnemyDeathAnimationDelay)
+                bool isLastRound = GameDataManager.Instance.GameData.RoundNumber + 1 >= GameDataManager.Instance.GameData.RoundsCount;
+                if ((!isLastRound && _enemyDeathAnimationTime >= EnemyDeathAnimationDelay) || (isLastRound && _enemyDeathAnimationTime >= EnemyLastDeathAnimationDelay))
                 {
                     _enemyDeathAnimationTime = 0;
                     if (RewardItems != null && RewardItems.Count > 0)
@@ -312,7 +318,7 @@ public class GameManager : MonoBehaviour
                         GameDataManager.Instance.GameData.Enemy.Health = GameDataManager.Instance.GameData.Enemy.MaxHealth;
                         _enemyAnimator.SetTrigger("Resurrect");
                         GameDataManager.Instance.GameData.State = GameState.PlayerTurn;
-                        Debug.Log($"Round {GameDataManager.Instance.GameData.RoundNumber + 1}/{GameDataManager.Instance.GameData.RoundsCount + 1}!");
+                        RoundText.text = $"Round {GameDataManager.Instance.GameData.RoundNumber + 1}/{GameDataManager.Instance.GameData.RoundsCount}!";
                     }
                     if (EnemyLifeSliderParent != null)
                     {
