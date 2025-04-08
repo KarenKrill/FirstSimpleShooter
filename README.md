@@ -4,5 +4,8 @@
 
 ## Gameplay
 
+### Lose strategy
 ![DeathGameplay](DeadGameplay.gif)
+
+### Win strategy
 ![WinGameplay](WinGameplay.gif)
