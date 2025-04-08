@@ -5,7 +5,11 @@
 ## Gameplay
 
 ### Lose strategy
-![DeathGameplay](DeadGameplay.gif)
+<p align="center">
+  <img src="DeadGameplay.gif" alt="DeathGameplay"/>
+</p>
 
 ### Win strategy
-![WinGameplay](WinGameplay.gif)
+<p align="center">
+  <img src="WinGameplay.gif" alt="WinGameplay"/>
+</p>
