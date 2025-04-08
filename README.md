@@ -4,4 +4,5 @@
 
 ## Gameplay
 
-![Gameplay](Gameplay.gif)
+![DeathGameplay](DeadGameplay.gif)
+![WinGameplay](WinGameplay.gif)
