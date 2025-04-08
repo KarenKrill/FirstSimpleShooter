@@ -19,6 +19,9 @@ public class MainSceneInstaller : MonoBehaviour
     bool _initializedIsFinished = false;
     private void Awake()
     {
+#if UNITY_EDITOR
+        Cursor.SetCursor(UnityEditor.PlayerSettings.defaultCursor, Vector2.zero, CursorMode.ForceSoftware);
+#endif
         GameDataManager.Instance.Init(new(GameState.Menu, 0, _roundsCount, _playerDefaultConfig, _enemyDefaultConfig));
     }
     private void Update()
